@@ -65,7 +65,6 @@ public class GatewayDiscover {
             ssdp = new DatagramSocket();
         }
         int port = ssdp.getLocalPort();
-        System.err.println("port " + port);
 
         final String searchMessage = "M-SEARCH * HTTP/1.1\r\n" +
                 "HOST: " + IP + ":" + port + "\r\n" +
