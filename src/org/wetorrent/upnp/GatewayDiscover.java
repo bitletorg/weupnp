@@ -35,8 +35,8 @@ import java.net.InetAddress;
 import java.net.SocketException;
 import java.net.SocketTimeoutException;
 import java.net.UnknownHostException;
-import java.util.Collection;
-import java.util.LinkedList;
+import java.util.HashMap;
+import java.util.Map;
 import javax.xml.parsers.ParserConfigurationException;
 import org.xml.sax.SAXException;
 
@@ -46,12 +46,12 @@ public class GatewayDiscover {
     public static final int PORT = 1900;
     public static final String IP = "239.255.255.250";
 
-    private Collection<GatewayDevice> devices = new LinkedList<GatewayDevice>();
+    private Map<InetAddress, GatewayDevice> devices = new HashMap<InetAddress, GatewayDevice>();
 
     public GatewayDiscover() {
     }
 
-    public Collection<GatewayDevice> discover() throws SocketException, UnknownHostException, IOException, SAXException, ParserConfigurationException{
+    public Map<InetAddress, GatewayDevice> discover() throws SocketException, UnknownHostException, IOException, SAXException, ParserConfigurationException{
 
         DatagramSocket ssdp = null;
         try {
@@ -64,7 +64,7 @@ public class GatewayDiscover {
             // let the JVM choose an available port
             ssdp = new DatagramSocket();
         }
-        int port = ssdp.getLocalPort();
+        int port = ssdp.getLocalPort();        
 
         final String searchMessage = "M-SEARCH * HTTP/1.1\r\n" +
                 "HOST: " + IP + ":" + port + "\r\n" +
@@ -87,18 +87,20 @@ public class GatewayDiscover {
                 DatagramPacket receivePacket = new DatagramPacket(new byte[1536], 1536);
                 try {
                     ssdp.receive(receivePacket);
+                    InetAddress localAddress = receivePacket.getAddress();
                     byte[] receivedData = new byte[receivePacket.getLength()];
                     System.arraycopy(receivePacket.getData(), 0, receivedData, 0, receivePacket.getLength());
 
                     // TODO: devices should be a map, and receivePacket.address should be the key ;)
                     GatewayDevice d = parseMSearchReplay(receivedData);
-                    devices.add(d);
+                    d.setLocalAddress(localAddress);
+                    devices.put(localAddress, d);
                 } catch (SocketTimeoutException ste) {
                     waitingPacket = false;
                 }
             }
 
-            for (GatewayDevice device : devices) {
+            for (GatewayDevice device : devices.values()) {
                 try{
                     device.loadDescription();
                 }catch(Exception e){}
@@ -143,7 +145,7 @@ public class GatewayDiscover {
 
     public GatewayDevice getValidGateway(){
 
-        for (GatewayDevice device : devices) {
+        for (GatewayDevice device : devices.values()) {
             try{
                 if (device.isConnected())
                     return device;

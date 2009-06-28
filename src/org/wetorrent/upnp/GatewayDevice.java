@@ -31,6 +31,7 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.net.HttpURLConnection;
+import java.net.InetAddress;
 import java.net.MalformedURLException;
 import java.net.ProtocolException;
 import java.net.URL;
@@ -74,7 +75,20 @@ public class GatewayDevice{
     private String modelDescription;
     private String presentationURL;
     
-    
+
+    /**
+     * The address used to reach this machine from the GatewayDevice
+     */
+    private InetAddress localAddress;
+
+    public InetAddress getLocalAddress() {
+        return localAddress;
+    }
+
+    public void setLocalAddress(InetAddress localAddress) {
+        this.localAddress = localAddress;
+    }
+
     /**
      * Creates a new instance of GatewayDevice
      */

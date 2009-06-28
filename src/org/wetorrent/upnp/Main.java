@@ -28,6 +28,7 @@
 package org.wetorrent.upnp;
 
 import java.net.InetAddress;
+import java.util.Map;
 
 public class Main {
     
@@ -38,13 +39,15 @@ public class Main {
         GatewayDiscover discover = new GatewayDiscover();
         discover.discover();
         GatewayDevice d = discover.getValidGateway();
+        InetAddress localAddress = d.getLocalAddress();
         
         String externalIPAddress = d.getExternalIPAddress();
+        System.err.println("internal ip: " + localAddress);
         System.err.println("ex ip:" + externalIPAddress);
         PortMappingEntry portMapping = new PortMappingEntry();
         if (!d.getSpecificPortMappingEntry(6991,"TCP",portMapping)){
             
-            if (d.addPortMapping(6991,6991,InetAddress.getLocalHost().getHostAddress(),"TCP","test")){
+            if (d.addPortMapping(6991,6991,localAddress.getHostAddress(),"TCP","test")){
                 
                 Thread.sleep(1000*10);
                 d.deletePortMapping(6991,"TCP");
