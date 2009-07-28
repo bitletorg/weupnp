@@ -78,6 +78,10 @@ public class GatewayDeviceHandler extends DefaultHandler{
                     device.setModelDescription(new String(ch,start,length));
                 else if ("presentationURL".compareTo(currentElement) == 0)
                     device.setPresentationURL(new String(ch,start,length));
+                else if ("modelNumber".compareTo(currentElement) == 0)
+                    device.setModelNumber(new String(ch,start,length));
+                else if ("modelName".compareTo(currentElement) == 0)
+                    device.setModelName(new String(ch,start,length));
             }
             if( currentElement.compareTo("serviceType") == 0 )
                 device.setServiceTypeCIF(new String(ch,start,length));

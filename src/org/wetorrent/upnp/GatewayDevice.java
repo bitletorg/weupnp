@@ -85,6 +85,16 @@ public class GatewayDevice {
      * The address used to reach this machine from the GatewayDevice
      */
     private InetAddress localAddress;
+    
+    /**
+     * The model number (used by the manufacturer to identify the product)
+     */
+    private String modelNumber;
+    
+    /**
+     * The model name
+     */
+    private String modelName;
 
     /**
      * Creates a new instance of GatewayDevice
@@ -129,6 +139,7 @@ public class GatewayDevice {
         sCPDURL = copyOrCatUrl(ipConDescURL, sCPDURL);
         controlURL = copyOrCatUrl(ipConDescURL, controlURL);
         controlURLCIF = copyOrCatUrl(ipConDescURL, controlURLCIF);
+        presentationURL = copyOrCatUrl(ipConDescURL, presentationURL);
     }
 
     /**
@@ -578,6 +589,22 @@ public class GatewayDevice {
 
     public void setPresentationURL(String presentationURL) {
         this.presentationURL = presentationURL;
+    }
+
+    public String getModelName() {
+        return modelName;
+    }
+
+    public void setModelName(String modelName) {
+        this.modelName = modelName;
+    }
+
+    public String getModelNumber() {
+        return modelNumber;
+    }
+
+    public void setModelNumber(String modelNumber) {
+        this.modelNumber = modelNumber;
     }
 
     // private methods
