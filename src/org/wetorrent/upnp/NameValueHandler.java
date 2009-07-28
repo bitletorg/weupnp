@@ -29,20 +29,76 @@ import org.xml.sax.Attributes;
 import org.xml.sax.SAXException;
 import org.xml.sax.helpers.DefaultHandler;
 
-public class NameValueHandler extends DefaultHandler{
-    
-    Map<String,String> nameValue;
-    
+/**
+ * A simple SAX handler that is used to parse XML name value pairs in the form
+ * &lt;name&gt;value&lt;/name&gt;
+ *
+ * @see org.xml.sax.helpers.DefaultHandler
+ */
+public class NameValueHandler extends DefaultHandler {
+
+    /**
+     * A reference to the name-value map to populate with the data being read
+     */
+    private Map<String,String> nameValue;
+
+    /**
+     * The last read element
+     */
+    private String currentElement;
+
+
+    /**
+     * Creates a new instance of a <tt>NameValueHandler</tt>, storing values in
+     * the supplied map
+     *
+     * @param nameValue the map to store name-value pairs in
+     */
     public NameValueHandler(Map<String,String> nameValue) {
         this.nameValue = nameValue;
     }
 
-    private String currentElement;
-    public void startElement(String uri, String localName, String qName, Attributes attributes) throws SAXException {
+    /**
+     * Receive notification of the start of an element.
+     *
+     * Caches the element as {@link #currentElement}, so that it will be stored
+     * as a map key when the corresponding value will be read.
+     *
+     * @param uri The Namespace URI, or the empty string if the
+     *        element has no Namespace URI or if Namespace
+     *        processing is not being performed.
+     * @param localName The local name (without prefix), or the
+     *        empty string if Namespace processing is not being
+     *        performed.
+     * @param qName The qualified name (with prefix), or the
+     *        empty string if qualified names are not available.
+     * @param attributes The attributes attached to the element.  If
+     *        there are no attributes, it shall be an empty
+     *        Attributes object.
+     * @exception org.xml.sax.SAXException Any SAX exception, possibly
+     *            wrapping another exception.
+     * @see org.xml.sax.ContentHandler#startElement
+     */
+    public void startElement(String uri, String localName, String qName,
+            Attributes attributes) throws SAXException {
         currentElement = localName;
     }
 
-    public void characters(char[] ch, int start, int length) throws SAXException {
+    /**
+     * Receive notification of character data inside an element.
+     *
+     * Stores the characters as value, using {@link #currentElement} as a key 
+     *
+     * @param ch The characters.
+     * @param start The start position in the character array.
+     * @param length The number of characters to use from the
+     *               character array.
+     * @exception org.xml.sax.SAXException Any SAX exception, possibly
+     *            wrapping another exception.
+     * @see org.xml.sax.ContentHandler#characters
+     */
+    public void characters(char[] ch, int start, int length)
+            throws SAXException {
         nameValue.put(currentElement,new String(ch,start,length));
     }
     
