@@ -29,29 +29,85 @@ import org.xml.sax.SAXException;
 import org.xml.sax.helpers.DefaultHandler;
 
 /**
+ * A SAX handler used to parse XML data representing a GatewayDevice
  *
- * @author casta
+ * @see org.xml.sax.helpers.DefaultHandler
  */
-public class GatewayDeviceHandler extends DefaultHandler{
-    
-    GatewayDevice device;
-    /** Creates a new instance of GatewayDeviceHandler */
-    public GatewayDeviceHandler(GatewayDevice device) {
+public class GatewayDeviceHandler extends DefaultHandler {
+
+    /**
+     * The device that should be populated with data coming from the stream
+     * being parsed
+     */
+    private GatewayDevice device;
+
+    /**
+     * Creates a new instance of GatewayDeviceHandler that will populate the
+     * fields of the supplied device
+     *
+     * @param device the device to configure
+     */
+    public GatewayDeviceHandler(final GatewayDevice device) {
         this.device = device;
     }
+
+    /** state variables */
+    private String currentElement;
+    private int level = 0;
+    private short state = 0;
     
-    String currentElement;
-    int level = 0;
-    short state = 0;
-    
-    public void startElement(String uri, String localName, String qName, Attributes attributes) throws SAXException {
+    /**
+     * Receive notification of the start of an element.
+     *
+     * Caches the element as {@link #currentElement}, and keeps track of some
+     * basic state information.
+     *
+     * @param uri The Namespace URI, or the empty string if the
+     *        element has no Namespace URI or if Namespace
+     *        processing is not being performed.
+     * @param localName The local name (without prefix), or the
+     *        empty string if Namespace processing is not being
+     *        performed.
+     * @param qName The qualified name (with prefix), or the
+     *        empty string if qualified names are not available.
+     * @param attributes The attributes attached to the element.  If
+     *        there are no attributes, it shall be an empty
+     *        Attributes object.
+     * @exception org.xml.sax.SAXException Any SAX exception, possibly
+     *            wrapping another exception.
+     * @see org.xml.sax.ContentHandler#startElement
+     */
+    public void startElement(String uri, String localName, String qName,
+            Attributes attributes) throws SAXException {
         currentElement = localName;
         level++;
         if (state < 1 && "serviceList".compareTo(currentElement) == 0) {
             state = 1;
         }
     }
-    
+
+    /**
+     * Receive notification of the end of an element.
+     *
+     * Used to update state information.
+     *
+     * <p>By default, do nothing.  Application writers may override this
+     * method in a subclass to take specific actions at the end of
+     * each element (such as finalising a tree node or writing
+     * output to a file).</p>
+     *
+     * @param uri The Namespace URI, or the empty string if the
+     *        element has no Namespace URI or if Namespace
+     *        processing is not being performed.
+     * @param localName The local name (without prefix), or the
+     *        empty string if Namespace processing is not being
+     *        performed.
+     * @param qName The qualified name (with prefix), or the
+     *        empty string if qualified names are not available.
+     * @exception org.xml.sax.SAXException Any SAX exception, possibly
+     *            wrapping another exception.
+     * @see org.xml.sax.ContentHandler#endElement
+     */
     public void endElement(String uri, String localName, String qName) throws SAXException {
         currentElement = "";
         level--;
@@ -64,7 +120,21 @@ public class GatewayDeviceHandler extends DefaultHandler{
                 state = 3;
         }
     }
-    
+
+    /**
+     * Receive notification of character data inside an element.
+     *
+     * It is used to read the values of the relevant fields of the device being
+     * configured.
+     *
+     * @param ch The characters.
+     * @param start The start position in the character array.
+     * @param length The number of characters to use from the
+     *               character array.
+     * @exception org.xml.sax.SAXException Any SAX exception, possibly
+     *            wrapping another exception.
+     * @see org.xml.sax.ContentHandler#characters
+     */
     public void characters(char[] ch, int start, int length) throws SAXException {
         if (currentElement.compareTo("URLBase") == 0)
             device.setURLBase(new String(ch,start,length));
