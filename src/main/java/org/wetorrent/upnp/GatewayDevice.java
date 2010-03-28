@@ -308,7 +308,7 @@ public class GatewayDevice {
      * @see #simpleUPnPcommand(java.lang.String, java.lang.String,
      *      java.lang.String, java.util.Map)
      * @see PortMappingEntry
-     * @todo consider refactoring this method to make it consistend with
+     * @todo consider refactoring this method to make it consistent with
      *      Java practices (return the port mapping)
      */
      public boolean getSpecificPortMappingEntry(int externalPort,

@@ -28,32 +28,59 @@
 package org.wetorrent.upnp;
 
 import java.net.InetAddress;
+import java.util.logging.Logger;
 
 public class Main {
-    
-    public Main() {
-    }
+
+    private static int SAMPLE_PORT = 6991;
+    private static short WAIT_TIME = 10;
     
     public static void main(String[] args) throws Exception{
+        Logger logger = LogUtils.getLogger();
+        logger.info("Starting weupnp");
+
         GatewayDiscover discover = new GatewayDiscover();
+        logger.info("Looking for Gateway Devices");
         discover.discover();
         GatewayDevice d = discover.getValidGateway();
-        InetAddress localAddress = d.getLocalAddress();
-        
-        String externalIPAddress = d.getExternalIPAddress();
-        System.err.println("internal ip: " + localAddress);
-        System.err.println("ex ip: " + externalIPAddress);
-        PortMappingEntry portMapping = new PortMappingEntry();
-        if (!d.getSpecificPortMappingEntry(6991,"TCP",portMapping)){
-            
-            if (d.addPortMapping(6991,6991,localAddress.getHostAddress(),"TCP","test")){
-                
-                Thread.sleep(1000*10);
-                d.deletePortMapping(6991,"TCP");
-            }
-            
+
+        if (null != d) {
+            logger.info("Gateway device found.");
+        } else {
+            logger.info("No valid gateway device found.");
+            return;
         }
         
+        InetAddress localAddress = d.getLocalAddress();
+        logger.info("Using local address: " + localAddress);
+        String externalIPAddress = d.getExternalIPAddress();
+        logger.info("External address: " + externalIPAddress);
+        PortMappingEntry portMapping = new PortMappingEntry();
+
+        logger.info("Attempting to map port " + SAMPLE_PORT);
+        logger.info("Querying device to see if mapping for port " + SAMPLE_PORT + " already exists");
+
+        if (!d.getSpecificPortMappingEntry(SAMPLE_PORT,"TCP",portMapping)) {
+            logger.info("Sending port mapping request");
+
+            if (d.addPortMapping(SAMPLE_PORT,SAMPLE_PORT,localAddress.getHostAddress(),"TCP","test")) {
+                logger.info("Mapping succesful: waiting " + WAIT_TIME + " seconds before removing mapping.");
+                
+                Thread.sleep(1000*WAIT_TIME);
+                d.deletePortMapping(SAMPLE_PORT,"TCP");
+
+                logger.info("Port mapping removed");
+                logger.info("Test SUCCESSFUL");
+            } else {
+                logger.info("Port mapping removal failed");
+                logger.info("Test FAILED");
+            }
+            
+        } else {
+            logger.info("Port was already mapped. Aborting test.");
+        }
+
+        logger.info("Stopping weupnp");
     }
     
 }
