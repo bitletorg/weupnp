@@ -30,6 +30,13 @@ package org.wetorrent.upnp;
 import java.net.InetAddress;
 import java.util.logging.Logger;
 
+/**
+ * This class contains a trivial main method that can be used to test whether
+ * weupnp is able to manipulate port mappings on a IGD (Internet Gateway
+ * Device) on the same network.
+ *
+ * @author Alessandro Bahgat Shehata
+ */
 public class Main {
 
     private static int SAMPLE_PORT = 6991;
