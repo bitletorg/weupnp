@@ -85,6 +85,32 @@ public class NameValueHandler extends DefaultHandler {
     }
 
     /**
+     * Receive notification of the end of an element.
+     *
+     * It is used to reset currentElement when the XML node is closed.
+     * Note: this works only when the data we are interested in does not contain
+     * child nodes.
+     *
+     * Based on a patch provided by christophercyll and attached to issue #4:
+     * http://code.google.com/p/weupnp/issues/detail?id=4
+     *
+     * @param uri The Namespace URI, or the empty string if the
+     *        element has no Namespace URI or if Namespace
+     *        processing is not being performed.
+     * @param localName The local name (without prefix), or the
+     *        empty string if Namespace processing is not being
+     *        performed.
+     * @param qName The qualified name (with prefix), or the
+     *        empty string if qualified names are not available.
+     * @throws SAXException Any SAX exception, possibly
+     *            wrapping another exception.
+     */
+    public void endElement(String uri, String localName, String qName)
+            throws SAXException {
+        currentElement = null;
+    }
+
+    /**
      * Receive notification of character data inside an element.
      *
      * Stores the characters as value, using {@link #currentElement} as a key 
@@ -99,7 +125,13 @@ public class NameValueHandler extends DefaultHandler {
      */
     public void characters(char[] ch, int start, int length)
             throws SAXException {
-        nameValue.put(currentElement,new String(ch,start,length));
+        if (currentElement != null) {
+            String value = new String(ch,start,length);
+            String old = nameValue.put(currentElement, value);
+            if (old != null) {
+                nameValue.put(currentElement, old + value);
+            }
+        }
     }
     
 
