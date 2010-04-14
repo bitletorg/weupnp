@@ -85,12 +85,12 @@ public class GatewayDevice {
      * The address used to reach this machine from the GatewayDevice
      */
     private InetAddress localAddress;
-    
+
     /**
      * The model number (used by the manufacturer to identify the product)
      */
     private String modelNumber;
-    
+
     /**
      * The model name
      */
@@ -153,7 +153,8 @@ public class GatewayDevice {
      * @param service the service to invoke
      * @param action the specific action to perform
      * @param args the command arguments
-     * @return the response to the performed command, as a name-vale map
+     * @return the response to the performed command, as a name-value map.
+     * In case errors occur, the returned map will be <i>empty.</i>
      * @throws IOException on communication errors
      * @throws SAXException if errors occur while parsing the response
      */
@@ -204,7 +205,14 @@ public class GatewayDevice {
         XMLReader parser = XMLReaderFactory.createXMLReader();
         parser.setContentHandler(new NameValueHandler(nameValue));
         if (conn.getResponseCode() == HttpURLConnection.HTTP_INTERNAL_ERROR) {
-            parser.parse(new InputSource(conn.getErrorStream()));
+            try {
+                // attempt to parse the error message
+                parser.parse(new InputSource(conn.getErrorStream()));
+            } catch (SAXException e) {
+                // ignore the exception
+                // FIXME We probably need to find a better way to return
+                // significant information when we reach this point
+            }
             conn.disconnect();
             return nameValue;
         } else {
@@ -290,7 +298,6 @@ public class GatewayDevice {
         return nameValue.get("errorCode") == null;
     }
 
-
     /**
      * Queries the GatewayDevice to retrieve a specific port mapping entry,
      * corresponding to specified criteria, if present.
@@ -311,7 +318,7 @@ public class GatewayDevice {
      * @todo consider refactoring this method to make it consistent with
      *      Java practices (return the port mapping)
      */
-     public boolean getSpecificPortMappingEntry(int externalPort,
+    public boolean getSpecificPortMappingEntry(int externalPort,
             String protocol, final PortMappingEntry portMappingEntry)
             throws IOException, SAXException {
         portMappingEntry.setExternalPort(externalPort);
@@ -438,7 +445,6 @@ public class GatewayDevice {
     }
 
     // getters and setters
-
     /**
      * Gets the local address
      * @return the {@link #localAddress}
@@ -608,7 +614,6 @@ public class GatewayDevice {
     }
 
     // private methods
-    
     private String copyOrCatUrl(String dst, String src) {
         if (src != null) {
             if (src.startsWith("http://")) {
