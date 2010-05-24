@@ -46,7 +46,7 @@ import org.xml.sax.SAXException;
 public class GatewayDiscover {
 
     /**
-     * The default port to use
+     * The SSDP port
      */
     public static final int PORT = 1900;
     /**
@@ -89,17 +89,7 @@ public class GatewayDiscover {
      */
     public Map<InetAddress, GatewayDevice> discover() throws SocketException, UnknownHostException, IOException, SAXException, ParserConfigurationException {
 
-        DatagramSocket ssdp = null;
-        try {
-            // try binding using the default port
-            ssdp = new DatagramSocket(PORT);
-        } catch (BindException be) { // ignored
-            // could not bind to the default port
-        }
-        if (null == ssdp) {
-            // let the JVM choose an available port
-            ssdp = new DatagramSocket();
-        }
+        DatagramSocket ssdp = new DatagramSocket();
         int port = ssdp.getLocalPort();
 
         final String searchMessage = "M-SEARCH * HTTP/1.1\r\n" +
