@@ -46,8 +46,8 @@
     </properties>
     <description>Weupnp is a lightweight Java library, released under the LGPL licence, designed to implement the UPnP protocol to handle port mappings on Gateway Devices.</description>
     <scm>
-        <connection>http://weupnp.googlecode.com/svn/trunk/</connection>
-        <developerConnection>https://weupnp.googlecode.com/svn/trunk/</developerConnection>
+        <connection>scm:svn:http://weupnp.googlecode.com/svn/trunk/</connection>
+        <developerConnection>scm:svn:https://weupnp.googlecode.com/svn/trunk/</developerConnection>
         <url>http://code.google.com/p/weupnp/source/browse/</url>
     </scm>
 </project>
