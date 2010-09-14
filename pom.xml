@@ -3,7 +3,7 @@
     <groupId>wetorrent</groupId>
     <artifactId>weupnp</artifactId>
     <packaging>jar</packaging>
-    <version>0.1.1</version>
+    <version>0.1.2-SNAPSHOT</version>
     <name>weupnp</name>
     <url>http://code.google.com/p/weupnp</url>
     <build>
@@ -45,9 +45,9 @@
     </properties>
     <description>Weupnp is a lightweight Java library, released under the LGPL licence, designed to implement the UPnP protocol to handle port mappings on Gateway Devices.</description>
     <scm>
-        <connection>scm:svn:http://weupnp.googlecode.com/svn/tags/weupnp-0.1.1</connection>
-        <developerConnection>scm:svn:https://weupnp.googlecode.com/svn/tags/weupnp-0.1.1</developerConnection>
-        <url>http://code.google.com/p/weupnp/source/browse/tags/weupnp-0.1.1</url>
+        <connection>scm:svn:http://weupnp.googlecode.com/svn/trunk/</connection>
+        <developerConnection>scm:svn:https://weupnp.googlecode.com/svn/trunk/</developerConnection>
+        <url>http://code.google.com/p/weupnp/source/browse/</url>
     </scm>
 </project>
 
