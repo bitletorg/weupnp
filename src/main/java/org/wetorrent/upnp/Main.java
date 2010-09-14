@@ -15,7 +15,7 @@
  * 
  * You should have received a copy of the GNU Lesser General Public
  * License along with this library; if not, write to the Free Software
- * Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
+ * Foundation, Inc., 51 Franklin St, FΩifth Floor, Boston, MA  02110-1301  USA
  * 
  * Alessandro Bahgat Shehata - ale dot bahgat at gmail dot com
  * Daniele Castagna - daniele dot castagna at gmail dot com
@@ -28,6 +28,7 @@
 package org.wetorrent.upnp;
 
 import java.net.InetAddress;
+import java.util.logging.Level;
 import java.util.logging.Logger;
 
 /**
@@ -52,26 +53,26 @@ public class Main {
         GatewayDevice d = discover.getValidGateway();
 
         if (null != d) {
-            logger.info("Gateway device found.");
+            logger.log(Level.INFO, "Gateway device found.\n{0} ({1})", new Object[]{d.getModelName(), d.getModelDescription()});
         } else {
             logger.info("No valid gateway device found.");
             return;
         }
         
         InetAddress localAddress = d.getLocalAddress();
-        logger.info("Using local address: " + localAddress);
+        logger.log(Level.INFO, "Using local address: {0}", localAddress);
         String externalIPAddress = d.getExternalIPAddress();
-        logger.info("External address: " + externalIPAddress);
+        logger.log(Level.INFO, "External address: {0}", externalIPAddress);
         PortMappingEntry portMapping = new PortMappingEntry();
 
-        logger.info("Attempting to map port " + SAMPLE_PORT);
-        logger.info("Querying device to see if mapping for port " + SAMPLE_PORT + " already exists");
+        logger.log(Level.INFO, "Attempting to map port {0}", SAMPLE_PORT);
+        logger.log(Level.INFO, "Querying device to see if mapping for port {0} already exists", SAMPLE_PORT);
 
         if (!d.getSpecificPortMappingEntry(SAMPLE_PORT,"TCP",portMapping)) {
             logger.info("Sending port mapping request");
 
             if (d.addPortMapping(SAMPLE_PORT,SAMPLE_PORT,localAddress.getHostAddress(),"TCP","test")) {
-                logger.info("Mapping succesful: waiting " + WAIT_TIME + " seconds before removing mapping.");
+                logger.log(Level.INFO, "Mapping succesful: waiting {0} seconds before removing mapping.", WAIT_TIME);
                 
                 Thread.sleep(1000*WAIT_TIME);
                 d.deletePortMapping(SAMPLE_PORT,"TCP");
