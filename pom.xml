@@ -1,6 +1,7 @@
+
 <project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
     <modelVersion>4.0.0</modelVersion>
-    <groupId>wetorrent</groupId>
+    <groupId>org.bitlet</groupId>
     <artifactId>weupnp</artifactId>
     <packaging>jar</packaging>
     <version>0.1.2-SNAPSHOT</version>
@@ -49,6 +50,53 @@
         <developerConnection>scm:svn:https://weupnp.googlecode.com/svn/trunk/</developerConnection>
         <url>http://code.google.com/p/weupnp/source/browse/</url>
     </scm>
+    <licenses>
+        <license>
+            <name>GNU Lesser General Public License (LGPL)</name>
+        </license>
+    </licenses>
+    <developers>
+        <developer>
+            <id>ale.bahgat</id>
+            <name>Alessandro Bahgat Shehata</name>
+        </developer>
+        <developer>
+            <id>daniele.castagna</id>
+            <name>Daniele Castagna</name>
+        </developer>
+        <developer>
+            <id>christophercyll</id>
+            <name>Cristopher Cyll</name>
+        </developer>
+    </developers>
+    <profiles>
+        <profile>
+            <id>release-sign-artifacts</id>
+            <activation>
+                <property>
+                    <name>performRelease</name>
+                    <value>true</value>
+                </property>
+            </activation>
+            <build>
+                <plugins>
+                    <plugin>
+                        <groupId>org.apache.maven.plugins</groupId>
+                        <artifactId>maven-gpg-plugin</artifactId>
+                        <executions>
+                            <execution>
+                                <id>sign-artifacts</id>
+                                <phase>verify</phase>
+                                <goals>
+                                    <goal>sign</goal>
+                                </goals>
+                            </execution>
+                        </executions>
+                    </plugin>
+                </plugins>
+            </build>
+        </profile>
+    </profiles>
 </project>
 
 
