@@ -161,7 +161,7 @@ public class GatewayDevice {
     public static Map<String, String> simpleUPnPcommand(String url,
             String service, String action, Map<String, String> args)
             throws IOException, SAXException {
-        String soapAction = service + "#" + action;
+        String soapAction = "\"" + service + "#" + action + "\"";
         StringBuffer soapBody = new StringBuffer();
 
         soapBody.append("<?xml version=\"1.0\"?>\r\n" +

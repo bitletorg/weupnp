@@ -36,8 +36,8 @@
                 <configuration>
                     <archive>
                         <manifest>
-                            <mainClass>org.wetorrent.upnp.Main</mainClass>
-                            <packageName>org.wetorrent.upnp</packageName>
+                            <mainClass>org.bitlet.weupnp.Main</mainClass>
+                            <packageName>org.bitlet.weupnp</packageName>
                             <addDefaultImplementationEntries>true</addDefaultImplementationEntries>
                             <addDefaultSpecificationEntries>true</addDefaultSpecificationEntries>
                         </manifest>

@@ -27,10 +27,13 @@ import java.io.BufferedReader;
 import java.io.ByteArrayInputStream;
 import java.io.IOException;
 import java.io.InputStreamReader;
+import java.net.URL;
 import java.net.BindException;
 import java.net.DatagramPacket;
 import java.net.DatagramSocket;
+import java.net.Socket;
 import java.net.InetAddress;
+import java.net.InetSocketAddress;
 import java.net.SocketAddress;
 import java.net.SocketException;
 import java.net.SocketTimeoutException;
@@ -93,7 +96,7 @@ public class GatewayDiscover {
         int port = ssdp.getLocalPort();
 
         final String searchMessage = "M-SEARCH * HTTP/1.1\r\n" +
-                "HOST: " + IP + ":" + port + "\r\n" +
+                "HOST: " + IP + ":" + PORT + "\r\n" +
                 "ST: " + "urn:schemas-upnp-org:device:InternetGatewayDevice:1" + "\r\n" +
                 "MAN: \"ssdp:discover\"\r\n" +
                 "MX: 2\r\n" +
@@ -118,9 +121,21 @@ public class GatewayDiscover {
 
                     // TODO: devices should be a map, and receivePacket.address should be the key ;)
                     GatewayDevice d = parseMSearchReplay(receivedData);
+                    SocketAddress addr = null;
 
+                    if(d.getLocation() != null)
+                    {
+                        URL u = new URL(d.getLocation());
+                        addr = new InetSocketAddress(u.getHost(), 
+				u.getPort() != -1 ? u.getPort() : u.getDefaultPort());
+                    }
+                    else
+                    {
+                        addr = receivePacket.getSocketAddress();
+                    }
+                        
                     /* Get local address as it appears to the Gateway */
-                    InetAddress localAddress = getOutboundAddress(receivePacket.getSocketAddress());
+                    InetAddress localAddress = getOutboundAddress(addr);
 
                     d.setLocalAddress(localAddress);
                     devices.put(localAddress, d);
@@ -223,6 +238,25 @@ public class GatewayDiscover {
 
         sock.disconnect();
         sock = null;
+
+        // for Windows OSi, bind a UDP socket does not permit to get the local
+        // address, so we try to connect via TCP.
+        if(localAddress.isAnyLocalAddress())
+        {
+            try
+            {
+                Socket tcpSock = new Socket();
+
+                tcpSock.setSoTimeout(1500);
+                tcpSock.connect(remoteAddress);
+                localAddress = tcpSock.getLocalAddress();
+                tcpSock.close();
+                tcpSock = null;
+            }
+            catch(Exception e)
+            {
+            }
+        }
 
         return localAddress;
     }
