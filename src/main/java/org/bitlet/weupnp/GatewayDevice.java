@@ -23,6 +23,7 @@
  */
 package org.bitlet.weupnp;
 
+import org.bitlet.weupnp.NameValueHandler;
 import java.io.IOException;
 import java.net.HttpURLConnection;
 import java.net.InetAddress;
@@ -282,8 +283,7 @@ public class GatewayDevice {
             String internalClient, String protocol, String description)
             throws IOException, SAXException {
         Map<String, String> args = new HashMap<String, String>();
-        // FIXME Why necessarily the empty string?
-        args.put("NewRemoteHost", "");
+        args.put("NewRemoteHost", "");	// wildcard, any remote host matches
         args.put("NewExternalPort", Integer.toString(externalPort));
         args.put("NewProtocol", protocol);
         args.put("NewInternalPort", Integer.toString(internalPort));
@@ -321,34 +321,40 @@ public class GatewayDevice {
     public boolean getSpecificPortMappingEntry(int externalPort,
             String protocol, final PortMappingEntry portMappingEntry)
             throws IOException, SAXException {
+    	
         portMappingEntry.setExternalPort(externalPort);
         portMappingEntry.setProtocol(protocol);
 
         Map<String, String> args = new HashMap<String, String>();
-        // FIXME Why necessarily the empty string?
-        args.put("NewRemoteHost", "");
+        args.put("NewRemoteHost", ""); // wildcard, any remote host matches
         args.put("NewExternalPort", Integer.toString(externalPort));
         args.put("NewProtocol", protocol);
 
         Map<String, String> nameValue = simpleUPnPcommand(controlURL,
                 serviceType, "GetSpecificPortMappingEntry", args);
-        String internalClient = nameValue.get("NewInternalClient");
-        String internalPort = nameValue.get("NewInternalPort");
-        // XXX are the description and other details really missing?
+        
+        if (nameValue.isEmpty() || nameValue.containsKey("errorCode"))
+        	return false;
+        
+        if (nameValue.containsKey("NewInternalClient")==false ||
+        	nameValue.containsKey("NewInternalPort")==false)
+        	return false;
+        
+        portMappingEntry.setProtocol(nameValue.get("NewProtocol"));
+        portMappingEntry.setEnabled(nameValue.get("NewEnabled"));
+        portMappingEntry.setInternalClient(nameValue.get("NewInternalClient"));
+        portMappingEntry.setExternalPort(externalPort);
+        portMappingEntry.setPortMappingDescription(nameValue.get("NewPortMappingDescription"));
+        portMappingEntry.setRemoteHost(nameValue.get("NewRemoteHost"));
 
-        if (internalClient != null) {
-            portMappingEntry.setInternalClient(internalClient);
+        try {
+        	portMappingEntry.setInternalPort(Integer.parseInt(nameValue.get("NewInternalPort")));
+        }catch (NumberFormatException nfe) {
+        	// skip bad port
         }
 
-        if (internalPort != null) {
-            try {
-                portMappingEntry.setInternalPort(
-                        Integer.parseInt(internalPort));
-            } catch (Exception e) {
-            }
-        }
 
-        return internalClient != null && internalPort != null;
+        return true;
     }
 
     /**
@@ -374,29 +380,30 @@ public class GatewayDevice {
 
         Map<String, String> nameValue = simpleUPnPcommand(controlURL,
                 serviceType, "GetGenericPortMappingEntry", args);
-
-        try {
-            portMappingEntry.setExternalPort(
-                    Integer.parseInt(nameValue.get("NewExternalPort")));
-        } catch (Exception e) {
-        }
-
+        
+        if (nameValue.isEmpty() || nameValue.containsKey("errorCode"))
+        	return false;
 
         portMappingEntry.setRemoteHost(nameValue.get("NewRemoteHost"));
         portMappingEntry.setInternalClient(nameValue.get("NewInternalClient"));
         portMappingEntry.setProtocol(nameValue.get("NewProtocol"));
+        portMappingEntry.setEnabled(nameValue.get("NewEnabled"));
+        portMappingEntry.setPortMappingDescription(
+                nameValue.get("NewPortMappingDescription"));
 
         try {
             portMappingEntry.setInternalPort(
                     Integer.parseInt(nameValue.get("NewInternalPort")));
         } catch (Exception e) {
         }
-        portMappingEntry.setEnabled(nameValue.get("NewEnabled"));
-        portMappingEntry.setPortMappingDescription(
-                nameValue.get("NewPortMappingDescription"));
-        /*portMappingEntry.set(nameValue.get("NewLeaseDuration"));*/
 
-        return nameValue.get("errorCode") == null;
+        try {
+        	portMappingEntry.setExternalPort(
+       		 Integer.parseInt(nameValue.get("NewExternalPort")));
+        } catch (Exception e) {
+        }
+
+        return true;
     }
 
     /**
@@ -446,7 +453,7 @@ public class GatewayDevice {
 
     // getters and setters
     /**
-     * Gets the local address
+     * Gets the local address to connect the gateway through
      * @return the {@link #localAddress}
      */
     public InetAddress getLocalAddress() {
