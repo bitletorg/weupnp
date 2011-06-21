@@ -84,11 +84,11 @@ public class Main {
 		for (GatewayDevice gw: gateways.values()) {
 			counter++;
 			AddLogline("Listing gateway details of device #" + counter+
-					"\n\tFriendly name:"+gw.getFriendlyName()+
-					"\n\tControl URL:"+gw.getControlURL()+
-					"\n\tModel name:"+gw.getModelName()+
-					"\n\tModel number:"+gw.getModelNumber()+
-					"\n\tLocal interface address"+gw.getLocalAddress().getHostAddress()+"\n");
+					"\n\tFriendly name: "+gw.getFriendlyName()+
+					"\n\tPresentation URL: "+gw.getPresentationURL()+
+					"\n\tModel name: "+gw.getModelName()+
+					"\n\tModel number: "+gw.getModelNumber()+
+					"\n\tLocal interface address: "+gw.getLocalAddress().getHostAddress()+"\n");
 		}
 
 		// choose the first active gateway for the tests
