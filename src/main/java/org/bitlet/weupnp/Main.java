@@ -27,23 +27,10 @@
  */
 package org.bitlet.weupnp;
 
-import java.awt.BorderLayout;
-import java.awt.Insets;
-import java.awt.Toolkit;
-import java.awt.datatransfer.Clipboard;
-import java.awt.datatransfer.StringSelection;
-import java.awt.event.ActionEvent;
-import java.awt.event.ActionListener;
 import java.net.InetAddress;
 import java.text.DateFormat;
 import java.util.Date;
 import java.util.Map;
-
-import javax.swing.JButton;
-import javax.swing.JFrame;
-import javax.swing.JOptionPane;
-import javax.swing.JScrollPane;
-import javax.swing.JTextArea;
 
 /**
  * This class contains a trivial main method that can be used to test whether
@@ -58,18 +45,7 @@ public class Main {
 	private static short WAIT_TIME = 10;
 	private static boolean LISTALLMAPPINGS = false;
 
-	private static JTextArea log = null;
-	private static JFrame frame = null;
-
 	public static void main(String[] args) throws Exception{
-
-		boolean usegui=true;
-		if (args.length==1 && args[0].equalsIgnoreCase("nogui"))
-			usegui = false;
-		
-		// Creates the GUI for the log output
-		if (usegui)
-			initGUI();
 
 		AddLogline("Starting weupnp");
 
@@ -141,23 +117,9 @@ public class Main {
 		PortMappingEntry portMapping = new PortMappingEntry();
 
 		if (activeGW.getSpecificPortMappingEntry(SAMPLE_PORT,"TCP",portMapping)) {
-			int ok = JOptionPane.showConfirmDialog(frame,"Port mapping for port "+SAMPLE_PORT+
-					" already exists. Do you want to remove this portmapping to continue the test?", 
-					"Port mapping exists", 
-					JOptionPane.YES_NO_CANCEL_OPTION);
-			if (ok == JOptionPane.CANCEL_OPTION) {
-				AddLogline("Aborting test");
-				return;
-			}
-			if (ok==JOptionPane.YES_OPTION) {
-				if (activeGW.deletePortMapping(SAMPLE_PORT,"TCP")==true)
-					AddLogline("Mapping removed");
-				else
-					AddLogline("Mapping removal failed");
-			}
-		}
-		
-		if (!activeGW.getSpecificPortMappingEntry(SAMPLE_PORT,"TCP",portMapping)) {
+			AddLogline("Port "+SAMPLE_PORT+" is already mapped. Aborting test.");
+			return;
+		} else {
 			AddLogline("Mapping free. Sending port mapping request for port "+SAMPLE_PORT);
 
 			// test static lease duration mapping
@@ -169,70 +131,17 @@ public class Main {
 					AddLogline("Port mapping removed, test SUCCESSFUL");
 				else
 					AddLogline("Port mapping removal FAILED");
-
 			}
-
-		} else {
-			AddLogline("Port is already mapped. Aborting test.");
-		}
+		} 
 
 		AddLogline("Stopping weupnp");
-	}
-
-	/**
-	* Creates a SWT GUI for logging test output and a copy-to-clipboard button
-	*/
-	private static void initGUI() {
-
-		frame = new JFrame("weupnp Test Application");
-		frame.setLayout(new BorderLayout(10,10));
-
-		JTextArea info = new JTextArea("This test will attempt to discover gateway devices in "+
-				"your LAN and test creating and removing a port mapping.");
-		info.setEditable(false);
-		info.setLineWrap(true);
-		info.setOpaque(false);
-		info.setBorder(null);
-		info.setFocusable(false);
-		info.setWrapStyleWord(true);
-		info.setMargin(new Insets(10, 10, 10, 10));
-
-		log = new JTextArea();
-		log.setEditable(false);
-		log.setLineWrap(true);
-		log.setMargin(new Insets(0, 5, 0, 5));
-
-		JScrollPane scrollPane = new JScrollPane(log, JScrollPane.VERTICAL_SCROLLBAR_AS_NEEDED,
-				JScrollPane.HORIZONTAL_SCROLLBAR_NEVER);
-
-		JButton btnCopyLog2CB= new JButton("Copy log to clipboard");
-		btnCopyLog2CB.addActionListener(new ActionListener(){
-			public void actionPerformed(ActionEvent ae){
-				StringSelection stringSelection = new StringSelection( log.getText() );
-				Clipboard clipboard = Toolkit.getDefaultToolkit().getSystemClipboard();
-				clipboard.setContents( stringSelection, null );
-			}
-		});
-
-		frame.add(info,BorderLayout.NORTH);
-		frame.add(scrollPane,BorderLayout.CENTER);
-		frame.add(btnCopyLog2CB,BorderLayout.SOUTH);
-
-		frame.setSize(600, 600);
-		frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
-		frame.setVisible(true);
 	}
 
 	static void AddLogline(String line) {
 
 		String timeStamp = DateFormat.getTimeInstance().format(new Date());
 		String logline = timeStamp+": "+line+"\n";
-
-		if (log!=null) {
-			log.setCaretPosition(log.getDocument().getLength());
-			log.append(logline);
-		} else
-			System.out.print(logline);
+		System.out.print(logline);
 	}
 
 }
