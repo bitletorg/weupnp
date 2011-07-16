@@ -257,7 +257,13 @@ public class GatewayDiscover {
 
         return null;
     }
-
+    
+    /**
+     * Returns list of all discovered gateways. Is empty when no gateway is found.
+     */
+    public Map<InetAddress, GatewayDevice> getAllGateways() {
+        return devices;
+    }
 
     /**
      * Retrieves all local IP addresses from all present network devices.

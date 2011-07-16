@@ -336,8 +336,8 @@ public class GatewayDevice {
         if (nameValue.isEmpty() || nameValue.containsKey("errorCode"))
         	return false;
         
-        if (nameValue.containsKey("NewInternalClient")==false ||
-        	nameValue.containsKey("NewInternalPort")==false)
+        if (!nameValue.containsKey("NewInternalClient") ||
+        	!nameValue.containsKey("NewInternalPort"))
         	return false;
         
         portMappingEntry.setProtocol(nameValue.get("NewProtocol"));

@@ -58,13 +58,18 @@ public class Main {
 	private static short WAIT_TIME = 10;
 	private static boolean LISTALLMAPPINGS = false;
 
-	private static JTextArea log;
-	private static JFrame frame;
+	private static JTextArea log = null;
+	private static JFrame frame = null;
 
 	public static void main(String[] args) throws Exception{
 
+		boolean usegui=true;
+		if (args.length==1 && args[0].equalsIgnoreCase("nogui"))
+			usegui = false;
+		
 		// Creates the GUI for the log output
-		initGUI();
+		if (usegui)
+			initGUI();
 
 		AddLogline("Starting weupnp");
 
@@ -112,8 +117,8 @@ public class Main {
 		if (LISTALLMAPPINGS) {
 			int pmCount=0;
 			do {
-				if (activeGW.getGenericPortMappingEntry(pmCount,portMapping0)==true)
-					AddLogline("Portmapping #"+pmCount+" successfully retrieved ("+portMapping0.getPortMappingDescription()+":"+portMapping0.getExternalPort());
+				if (activeGW.getGenericPortMappingEntry(pmCount,portMapping0))
+					AddLogline("Portmapping #"+pmCount+" successfully retrieved ("+portMapping0.getPortMappingDescription()+":"+portMapping0.getExternalPort()+")");
 				else{
 					AddLogline("Portmapping #"+pmCount+" retrival failed"); 
 					break;
@@ -121,8 +126,8 @@ public class Main {
 				pmCount++;
 			} while (portMapping0!=null);
 		} else {
-			if (activeGW.getGenericPortMappingEntry(0,portMapping0)==true)
-				AddLogline("Portmapping #0 successfully retrieved ("+portMapping0.getPortMappingDescription()+":"+portMapping0.getExternalPort());
+			if (activeGW.getGenericPortMappingEntry(0,portMapping0))
+				AddLogline("Portmapping #0 successfully retrieved ("+portMapping0.getPortMappingDescription()+":"+portMapping0.getExternalPort()+")");
 			else
 				AddLogline("Portmapping #0 retrival failed");        	
 		}
@@ -135,7 +140,7 @@ public class Main {
 		AddLogline("Querying device to see if a port mapping already exists for port "+ SAMPLE_PORT);
 		PortMappingEntry portMapping = new PortMappingEntry();
 
-		if (activeGW.getSpecificPortMappingEntry(SAMPLE_PORT,"TCP",portMapping)==true) {
+		if (activeGW.getSpecificPortMappingEntry(SAMPLE_PORT,"TCP",portMapping)) {
 			int ok = JOptionPane.showConfirmDialog(frame,"Port mapping for port "+SAMPLE_PORT+
 					" already exists. Do you want to remove this portmapping to continue the test?", 
 					"Port mapping exists", 
@@ -152,11 +157,11 @@ public class Main {
 			}
 		}
 		
-		if (activeGW.getSpecificPortMappingEntry(SAMPLE_PORT,"TCP",portMapping)==false) {
+		if (!activeGW.getSpecificPortMappingEntry(SAMPLE_PORT,"TCP",portMapping)) {
 			AddLogline("Mapping free. Sending port mapping request for port "+SAMPLE_PORT);
 
 			// test static lease duration mapping
-			if (activeGW.addPortMapping(SAMPLE_PORT,SAMPLE_PORT,localAddress.getHostAddress(),"TCP","test")==true) {
+			if (activeGW.addPortMapping(SAMPLE_PORT,SAMPLE_PORT,localAddress.getHostAddress(),"TCP","test")) {
 				AddLogline("Mapping SUCCESSFUL. Waiting "+WAIT_TIME+" seconds before removing mapping...");
 				Thread.sleep(1000*WAIT_TIME);
 
