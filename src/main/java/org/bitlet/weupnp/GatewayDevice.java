@@ -24,6 +24,7 @@
 package org.bitlet.weupnp;
 
 import org.bitlet.weupnp.NameValueHandler;
+
 import java.io.IOException;
 import java.net.HttpURLConnection;
 import java.net.InetAddress;
@@ -32,6 +33,7 @@ import java.net.URLConnection;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Set;
+
 import org.xml.sax.InputSource;
 import org.xml.sax.SAXException;
 import org.xml.sax.XMLReader;
@@ -39,9 +41,10 @@ import org.xml.sax.helpers.XMLReaderFactory;
 
 /**
  * A <tt>GatewayDevice</tt> is a class that abstracts UPnP-compliant gateways
- *
+ * <p/>
  * It holds all the information that comes back as UPnP responses, and
  * provides methods to issue UPnP commands to a gateway.
+ *
  * @author casta
  */
 public class GatewayDevice {
@@ -105,14 +108,14 @@ public class GatewayDevice {
 
     /**
      * Retrieves the properties and description of the GatewayDevice.
-     *
-     * Connects to the device's {@link #location} and parses the response 
+     * <p/>
+     * Connects to the device's {@link #location} and parses the response
      * using a {@link GatewayDeviceHandler} to populate the fields of this
      * class
      *
      * @throws SAXException if an error occurs while parsing the request
-     * @throws IOException on communication errors
-     * @see org.wetorrent.upnp.GatewayDeviceHandler
+     * @throws IOException  on communication errors
+     * @see org.bitlet.weupnp.GatewayDeviceHandler
      */
     public void loadDescription() throws SAXException, IOException {
 
@@ -146,31 +149,31 @@ public class GatewayDevice {
     /**
      * Issues UPnP commands to a GatewayDevice that can be reached at the
      * specified <tt>url</tt>
-     *
+     * <p/>
      * The command is identified by a <tt>service</tt> and an <tt>action</tt>
      * and can receive arguments
-     * 
-     * @param url the url to use to contact the device
+     *
+     * @param url     the url to use to contact the device
      * @param service the service to invoke
-     * @param action the specific action to perform
-     * @param args the command arguments
+     * @param action  the specific action to perform
+     * @param args    the command arguments
      * @return the response to the performed command, as a name-value map.
-     * In case errors occur, the returned map will be <i>empty.</i>
-     * @throws IOException on communication errors
+     *         In case errors occur, the returned map will be <i>empty.</i>
+     * @throws IOException  on communication errors
      * @throws SAXException if errors occur while parsing the response
      */
     public static Map<String, String> simpleUPnPcommand(String url,
-            String service, String action, Map<String, String> args)
+                                                        String service, String action, Map<String, String> args)
             throws IOException, SAXException {
         String soapAction = "\"" + service + "#" + action + "\"";
-        StringBuffer soapBody = new StringBuffer();
+        StringBuilder soapBody = new StringBuilder();
 
         soapBody.append("<?xml version=\"1.0\"?>\r\n" +
-            "<SOAP-ENV:Envelope " +
-            "xmlns:SOAP-ENV=\"http://schemas.xmlsoap.org/soap/envelope/\" " +
-            "SOAP-ENV:encodingStyle=\"http://schemas.xmlsoap.org/soap/encoding/\">" +
-            "<SOAP-ENV:Body>" +
-            "<m:" + action + " xmlns:m=\"" + service + "\">");
+                "<SOAP-ENV:Envelope " +
+                "xmlns:SOAP-ENV=\"http://schemas.xmlsoap.org/soap/envelope/\" " +
+                "SOAP-ENV:encodingStyle=\"http://schemas.xmlsoap.org/soap/encoding/\">" +
+                "<SOAP-ENV:Body>" +
+                "<m:" + action + " xmlns:m=\"" + service + "\">");
 
         if (args != null && args.size() > 0) {
 
@@ -247,9 +250,10 @@ public class GatewayDevice {
 
     /**
      * Retrieves the external IP address associated with this device
-     *
+     * <p/>
      * The external address is the address that can be used to connect to the
      * GatewayDevice from the external network
+     *
      * @return the external IP
      * @throws IOException
      * @throws SAXException
@@ -267,11 +271,11 @@ public class GatewayDevice {
      * Adds a new port mapping to the GatewayDevices using the supplied
      * parameters.
      *
-     * @param externalPort the external associated with the new mapping
-     * @param internalPort the internal port associated with the new mapping
+     * @param externalPort   the external associated with the new mapping
+     * @param internalPort   the internal port associated with the new mapping
      * @param internalClient the internal client associated with the new mapping
-     * @param protocol the protocol associated with the new mapping
-     * @param description the mapping description
+     * @param protocol       the protocol associated with the new mapping
+     * @param description    the mapping description
      * @return true if the mapping was succesfully added, false otherwise
      * @throws IOException
      * @throws SAXException
@@ -280,10 +284,10 @@ public class GatewayDevice {
      * @see PortMappingEntry
      */
     public boolean addPortMapping(int externalPort, int internalPort,
-            String internalClient, String protocol, String description)
+                                  String internalClient, String protocol, String description)
             throws IOException, SAXException {
         Map<String, String> args = new HashMap<String, String>();
-        args.put("NewRemoteHost", "");	// wildcard, any remote host matches
+        args.put("NewRemoteHost", "");    // wildcard, any remote host matches
         args.put("NewExternalPort", Integer.toString(externalPort));
         args.put("NewProtocol", protocol);
         args.put("NewInternalPort", Integer.toString(internalPort));
@@ -301,27 +305,27 @@ public class GatewayDevice {
     /**
      * Queries the GatewayDevice to retrieve a specific port mapping entry,
      * corresponding to specified criteria, if present.
-     *
+     * <p/>
      * Retrieves the <tt>PortMappingEntry</tt> associated with
      * <tt>externalPort</tt> and <tt>protocol</tt>, if present.
      *
-     * @param externalPort the external port
-     * @param protocol the protocol (TCP or UDP)
+     * @param externalPort     the external port
+     * @param protocol         the protocol (TCP or UDP)
      * @param portMappingEntry the entry containing the details, in any is
-     *      present, <i>null</i> otherwise. <i>(used as return value)</i>
+     *                         present, <i>null</i> otherwise. <i>(used as return value)</i>
      * @return true if a valid mapping is found
      * @throws IOException
      * @throws SAXException
+     * @todo consider refactoring this method to make it consistent with
+     * Java practices (return the port mapping)
      * @see #simpleUPnPcommand(java.lang.String, java.lang.String,
      *      java.lang.String, java.util.Map)
      * @see PortMappingEntry
-     * @todo consider refactoring this method to make it consistent with
-     *      Java practices (return the port mapping)
      */
     public boolean getSpecificPortMappingEntry(int externalPort,
-            String protocol, final PortMappingEntry portMappingEntry)
+                                               String protocol, final PortMappingEntry portMappingEntry)
             throws IOException, SAXException {
-    	
+
         portMappingEntry.setExternalPort(externalPort);
         portMappingEntry.setProtocol(protocol);
 
@@ -332,14 +336,14 @@ public class GatewayDevice {
 
         Map<String, String> nameValue = simpleUPnPcommand(controlURL,
                 serviceType, "GetSpecificPortMappingEntry", args);
-        
+
         if (nameValue.isEmpty() || nameValue.containsKey("errorCode"))
-        	return false;
-        
+            return false;
+
         if (!nameValue.containsKey("NewInternalClient") ||
-        	!nameValue.containsKey("NewInternalPort"))
-        	return false;
-        
+                !nameValue.containsKey("NewInternalPort"))
+            return false;
+
         portMappingEntry.setProtocol(nameValue.get("NewProtocol"));
         portMappingEntry.setEnabled(nameValue.get("NewEnabled"));
         portMappingEntry.setInternalClient(nameValue.get("NewInternalClient"));
@@ -348,9 +352,9 @@ public class GatewayDevice {
         portMappingEntry.setRemoteHost(nameValue.get("NewRemoteHost"));
 
         try {
-        	portMappingEntry.setInternalPort(Integer.parseInt(nameValue.get("NewInternalPort")));
-        }catch (NumberFormatException nfe) {
-        	// skip bad port
+            portMappingEntry.setInternalPort(Integer.parseInt(nameValue.get("NewInternalPort")));
+        } catch (NumberFormatException nfe) {
+            // skip bad port
         }
 
 
@@ -360,29 +364,29 @@ public class GatewayDevice {
     /**
      * Returns a specific port mapping entry, depending on a the supplied index.
      *
-     * @param index the index of the desired port mapping
+     * @param index            the index of the desired port mapping
      * @param portMappingEntry the entry containing the details, in any is
-     *      present, <i>null</i> otherwise. <i>(used as return value)</i>
+     *                         present, <i>null</i> otherwise. <i>(used as return value)</i>
      * @return true if a valid mapping is found
      * @throws IOException
      * @throws SAXException
+     * @todo consider refactoring this method to make it consistent with
+     * Java practices (return the port mapping)
      * @see #simpleUPnPcommand(java.lang.String, java.lang.String,
      *      java.lang.String, java.util.Map)
      * @see PortMappingEntry
-     * @todo consider refactoring this method to make it consistend with
-     *      Java practices (return the port mapping)
      */
     public boolean getGenericPortMappingEntry(int index,
-            final PortMappingEntry portMappingEntry)
+                                              final PortMappingEntry portMappingEntry)
             throws IOException, SAXException {
         Map<String, String> args = new HashMap<String, String>();
         args.put("NewPortMappingIndex", Integer.toString(index));
 
         Map<String, String> nameValue = simpleUPnPcommand(controlURL,
                 serviceType, "GetGenericPortMappingEntry", args);
-        
+
         if (nameValue.isEmpty() || nameValue.containsKey("errorCode"))
-        	return false;
+            return false;
 
         portMappingEntry.setRemoteHost(nameValue.get("NewRemoteHost"));
         portMappingEntry.setInternalClient(nameValue.get("NewInternalClient"));
@@ -398,8 +402,8 @@ public class GatewayDevice {
         }
 
         try {
-        	portMappingEntry.setExternalPort(
-       		 Integer.parseInt(nameValue.get("NewExternalPort")));
+            portMappingEntry.setExternalPort(
+                    Integer.parseInt(nameValue.get("NewExternalPort")));
         } catch (Exception e) {
         }
 
@@ -409,6 +413,7 @@ public class GatewayDevice {
     /**
      * Retrieves the number of port mappings that are registered on the
      * GatewayDevice.
+     *
      * @return the number of port mappings
      * @throws IOException
      * @throws SAXException
@@ -434,7 +439,7 @@ public class GatewayDevice {
      * <tt>protocol</tt>
      *
      * @param externalPort the external port
-     * @param protocol the protocol
+     * @param protocol     the protocol
      * @return true if removal was successful
      * @throws IOException
      * @throws SAXException
@@ -452,8 +457,10 @@ public class GatewayDevice {
     }
 
     // getters and setters
+
     /**
      * Gets the local address to connect the gateway through
+     *
      * @return the {@link #localAddress}
      */
     public InetAddress getLocalAddress() {
@@ -462,6 +469,7 @@ public class GatewayDevice {
 
     /**
      * Sets the {@link #localAddress}
+     *
      * @param localAddress the address to set
      */
     public void setLocalAddress(InetAddress localAddress) {
