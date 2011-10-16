@@ -49,7 +49,12 @@ import org.xml.sax.helpers.XMLReaderFactory;
  */
 public class GatewayDevice {
 
-    private String st;
+	/**
+	 * Receive timeout when requesting data from device
+	 */
+    private static final int HTTP_RECEIVE_TIMEOUT = 7000;
+    
+	private String st;
     private String location;
     private String serviceType;
     private String serviceTypeCIF;
@@ -120,6 +125,7 @@ public class GatewayDevice {
     public void loadDescription() throws SAXException, IOException {
 
         URLConnection urlConn = new URL(getLocation()).openConnection();
+        urlConn.setReadTimeout(HTTP_RECEIVE_TIMEOUT);
 
         XMLReader parser = XMLReaderFactory.createXMLReader();
         parser.setContentHandler(new GatewayDeviceHandler(this));
@@ -193,6 +199,7 @@ public class GatewayDevice {
         HttpURLConnection conn = (HttpURLConnection) postUrl.openConnection();
 
         conn.setRequestMethod("POST");
+        conn.setReadTimeout(HTTP_RECEIVE_TIMEOUT);
         conn.setDoOutput(true);
         conn.setRequestProperty("Content-Type", "text/xml");
         conn.setRequestProperty("SOAPAction", soapAction);
