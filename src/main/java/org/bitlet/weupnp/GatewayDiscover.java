@@ -175,7 +175,7 @@ public class GatewayDiscover {
         this.searchTypes = types;
     }
 
-    /**
+	/**
      * Discovers Gateway Devices on the network(s) the executing machine is
      * connected to.
      * <p/>
