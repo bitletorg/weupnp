@@ -66,7 +66,11 @@ public class GatewayDiscover {
      */
     private static final int TIMEOUT = 3000;
 
-
+    /**
+     * The gateway types the discover have to search.
+     */
+    private String[] searchTypes;
+    
     /**
      * A map of the GatewayDevices discovered so far.
      * The assumption is that a machine is connected to up to a Gateway Device
@@ -135,6 +139,41 @@ public class GatewayDiscover {
             }
         }
     }
+    
+    /**
+     * Constructor.
+     * 
+     * By default it's looking for 3 types of gateways.
+     * 
+     */
+    public GatewayDiscover ()
+    {
+        this(new String[] {
+            "urn:schemas-upnp-org:device:InternetGatewayDevice:1",
+            "urn:schemas-upnp-org:service:WANIPConnection:1",
+            "urn:schemas-upnp-org:service:WANPPPConnection:1"
+            //,"upnp:rootdevice"
+        });
+    }
+
+    /**
+     * Constructor of the gateway discover service.
+     * 
+     * @param st The search type you are looking for
+     */
+    public GatewayDiscover(String st) {
+        this(new String[]{st});
+    }
+    
+    /**
+     * Constructor.
+     * 
+     * @param types The search types the discover have to look for
+     */
+    public GatewayDiscover (String[] types)
+    {
+        this.searchTypes = types;
+    }
 
     /**
      * Discovers Gateway Devices on the network(s) the executing machine is
@@ -157,19 +196,11 @@ public class GatewayDiscover {
 
         Collection<InetAddress> ips = getLocalInetAddresses(true, false, false);
 
-        // ST parameter: Search Targets
-        String[] SEARCHTYPES = {
-                "urn:schemas-upnp-org:device:InternetGatewayDevice:1"
-                , "urn:schemas-upnp-org:service:WANIPConnection:1"
-                , "urn:schemas-upnp-org:service:WANPPPConnection:1"
-//			,"upnp:rootdevice"
-        };
-
-        for (int i = 0; i < SEARCHTYPES.length; i++) {
+        for (int i = 0; i < searchTypes.length; i++) {
 
             String searchMessage = "M-SEARCH * HTTP/1.1\r\n" +
                     "HOST: " + IP + ":" + PORT + "\r\n" +
-                    "ST: " + SEARCHTYPES[i] + "\r\n" +
+                    "ST: " + searchTypes[i] + "\r\n" +
                     "MAN: \"ssdp:discover\"\r\n" +
                     "MX: 2\r\n" +    // seconds to delay response
                     "\r\n";
