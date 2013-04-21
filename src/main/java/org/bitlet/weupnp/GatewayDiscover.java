@@ -139,21 +139,19 @@ public class GatewayDiscover {
             }
         }
     }
-    
+
     /**
      * Constructor.
      * 
      * By default it's looking for 3 types of gateways.
      * 
      */
-    public GatewayDiscover ()
-    {
-    	this(new String[] {
+    public GatewayDiscover () {
+        this(new String[] {
             "urn:schemas-upnp-org:device:InternetGatewayDevice:1",
             "urn:schemas-upnp-org:service:WANIPConnection:1",
             "urn:schemas-upnp-org:service:WANPPPConnection:1"
-			//,"upnp:rootdevice"
-    	});
+        });
     }
 
     /**
@@ -162,20 +160,19 @@ public class GatewayDiscover {
      * @param st The search type you are looking for
      */
     public GatewayDiscover(String st) {
-		this(new String[]{st});
-	}
+        this(new String[]{st});
+    }
     
     /**
      * Constructor.
      * 
      * @param types The search types the discover have to look for
      */
-    public GatewayDiscover (String[] types)
-    {
-    	this.searchTypes = types;
+    public GatewayDiscover (String[] types) {
+        this.searchTypes = types;
     }
 
-	/**
+    /**
      * Discovers Gateway Devices on the network(s) the executing machine is
      * connected to.
      * <p/>
