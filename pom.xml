@@ -6,11 +6,11 @@
     <packaging>jar</packaging>
     <version>0.1.2-SNAPSHOT</version>
     <name>weupnp</name>
-    <url>http://code.google.com/p/weupnp</url>
+    <url>https://github.com/bitletorg/weupnp</url>
     <parent>
         <groupId>org.sonatype.oss</groupId>
         <artifactId>oss-parent</artifactId>
-        <version>5</version>
+        <version>7</version>
     </parent>
     <build>
         <plugins>
@@ -51,9 +51,9 @@
     </properties>
     <description>Weupnp is a lightweight Java library, released under the LGPL licence, designed to implement the UPnP protocol to handle port mappings on Gateway Devices.</description>
     <scm>
-        <connection>scm:svn:http://weupnp.googlecode.com/svn/trunk/</connection>
-        <developerConnection>scm:svn:https://weupnp.googlecode.com/svn/trunk/</developerConnection>
-        <url>http://code.google.com/p/weupnp/source/browse/</url>
+        <connection>scm:git:https://github.com/bitletorg/weupnp.git</connection>
+        <developerConnection>scm:git:https://github.com/bitletorg/weupnp.git</developerConnection>
+        <url>https://github.com/bitletorg/weupnp</url>
     </scm>
     <licenses>
         <license>
