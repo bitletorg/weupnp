@@ -1,0 +1,172 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <meta charset='utf-8'>
+    <meta http-equiv="X-UA-Compatible" content="chrome=1">
+    <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
+    <link href='https://fonts.googleapis.com/css?family=Architects+Daughter' rel='stylesheet' type='text/css'>
+    <link rel="stylesheet" type="text/css" href="stylesheets/stylesheet.css" media="screen" />
+    <link rel="stylesheet" type="text/css" href="stylesheets/pygment_trac.css" media="screen" />
+    <link rel="stylesheet" type="text/css" href="stylesheets/print.css" media="print" />
+
+    <!--[if lt IE 9]>
+    <script src="//html5shiv.googlecode.com/svn/trunk/html5.js"></script>
+    <![endif]-->
+
+    <title>Weupnp by bitletorg</title>
+  </head>
+
+  <body>
+    <header>
+      <div class="inner">
+        <h1>Weupnp</h1>
+        <h2>A tiny UPnP (Universal Plug and Play) client library written in Java</h2>
+        <a href="https://github.com/bitletorg/weupnp" class="button"><small>View project on</small>GitHub</a>
+      </div>
+    </header>
+
+    <div id="content-wrapper">
+      <div class="inner clearfix">
+        <section id="main-content">
+          <h1>Overview</h1>
+
+<p>Weupnp is a lightweight Java library designed to implement the <a href="http://en.wikipedia.org/wiki/Universal_Plug_and_Play">UPnP protocol</a> to handle port mappings on Gateway Devices.</p>
+
+<h1>weupnp in the wild</h1>
+
+<ul>
+<li>Weupnp is used by the <a href="http://bitlet.org">BitLet applet</a> to open ports for incoming connections and to build an <a href="http://www.bitlet.org/upnp">interactive console</a> for the administration of port mappings on UPnP devices.</li>
+<li>Since version 1.6, the <a href="http://upnp-portmapper.sourceforge.net/">UPnP PortMapper</a> can use weupnp to communicate with Gateway Devices.</li>
+<li>
+<a href="http://www.jitsi.org/">Jitsi</a> (formerly SIP communicator) uses weupnp to gather UPnP candidates for ICE operations</li>
+</ul><h1>Download weupnp</h1>
+
+<p>The link at the top of this page will allow you to download archives with source code.</p>
+
+<p>The binary archives for weupnp are still distributed through the old Google Code <a href="https://code.google.com/p/weupnp/downloads/list">site</a>.</p>
+
+<h1>Licensing</h1>
+
+<p>weupnp is released under the LGPL license.</p>
+
+<h1>Use weupnp</h1>
+
+<p>Using weupnp is fairly simple, here is an annotated example of the what you would need to do to manipulate a simple mapping on your gateway.</p>
+
+<h2>Annotated example</h2>
+
+<p>Set up a logger (you can use whichever library you prefer, the example uses java.util.logging for simplicity) and start the gateway discovery: this will send a probe message to find suitable UPnP devices on the same network the client is on.</p>
+
+<div class="highlight"><pre><span class="n">Logger</span> <span class="n">logger</span> <span class="o">=</span> <span class="n">LogUtils</span><span class="o">.</span><span class="na">getLogger</span><span class="o">();</span>
+<span class="n">logger</span><span class="o">.</span><span class="na">info</span><span class="o">(</span><span class="s">"Starting weupnp"</span><span class="o">);</span>
+
+<span class="n">GatewayDiscover</span> <span class="n">discover</span> <span class="o">=</span> <span class="k">new</span> <span class="n">GatewayDiscover</span><span class="o">();</span>
+<span class="n">logger</span><span class="o">.</span><span class="na">info</span><span class="o">(</span><span class="s">"Looking for Gateway Devices"</span><span class="o">);</span>
+<span class="n">discover</span><span class="o">.</span><span class="na">discover</span><span class="o">();</span>
+</pre></div>
+
+<p>Select a valid gateway that can be used to do port mappings.</p>
+
+<div class="highlight"><pre><span class="n">GatewayDevice</span> <span class="n">d</span> <span class="o">=</span> <span class="n">discover</span><span class="o">.</span><span class="na">getValidGateway</span><span class="o">();</span>
+</pre></div>
+
+<p>The previous method will return <code>null</code> if no valid gateway has not been found.</p>
+
+<div class="highlight"><pre><span class="k">if</span> <span class="o">(</span><span class="kc">null</span> <span class="o">!=</span> <span class="n">d</span><span class="o">)</span> <span class="o">{</span>
+    <span class="n">logger</span><span class="o">.</span><span class="na">info</span><span class="o">(</span><span class="s">"Found gateway device.\n{0} ({1})"</span><span class="o">,</span>
+        <span class="k">new</span> <span class="n">Object</span><span class="o">[]{</span><span class="n">d</span><span class="o">.</span><span class="na">getModelName</span><span class="o">(),</span> <span class="n">d</span><span class="o">.</span><span class="na">getModelDescription</span><span class="o">()});</span>
+<span class="o">}</span> <span class="k">else</span> <span class="o">{</span>
+    <span class="n">logger</span><span class="o">.</span><span class="na">info</span><span class="o">(</span><span class="s">"No valid gateway device found."</span><span class="o">);</span>
+    <span class="k">return</span><span class="o">;</span>
+<span class="o">}</span>
+</pre></div>
+
+<p>The retrieved <code>GatewayDevice</code> will contain some useful information, including the internal/external addresses of the device.</p>
+
+<div class="highlight"><pre><span class="n">InetAddress</span> <span class="n">localAddress</span> <span class="o">=</span> <span class="n">d</span><span class="o">.</span><span class="na">getLocalAddress</span><span class="o">();</span>
+<span class="n">logger</span><span class="o">.</span><span class="na">info</span><span class="o">(</span><span class="s">"Using local address: {0}"</span><span class="o">,</span> <span class="n">localAddress</span><span class="o">);</span>
+<span class="n">String</span> <span class="n">externalIPAddress</span> <span class="o">=</span> <span class="n">d</span><span class="o">.</span><span class="na">getExternalIPAddress</span><span class="o">();</span>
+<span class="n">logger</span><span class="o">.</span><span class="na">info</span><span class="o">(</span><span class="s">"External address: {0}"</span><span class="o">,</span> <span class="n">externalIPAddress</span><span class="o">);</span>
+</pre></div>
+
+<p>Create a new Port Mapping entry:</p>
+
+<div class="highlight"><pre><span class="n">logger</span><span class="o">.</span><span class="na">info</span><span class="o">(</span><span class="s">"Attempting to map port {0}"</span><span class="o">,</span> <span class="n">SAMPLE_PORT</span><span class="o">);</span>
+<span class="n">PortMappingEntry</span> <span class="n">portMapping</span> <span class="o">=</span> <span class="k">new</span> <span class="n">PortMappingEntry</span><span class="o">();</span>
+</pre></div>
+
+<p>The <code>getSpecificPortMappingEntry</code> method can be used to search for existing mappings. If it returns <code>true</code>, it means that a mapping for the given port is already registered on the gateway.</p>
+
+<div class="highlight"><pre><span class="n">logger</span><span class="o">.</span><span class="na">info</span><span class="o">(</span><span class="s">"Querying device to see if mapping for port {0} already exists"</span><span class="o">,</span>
+        <span class="n">SAMPLE_PORT</span><span class="o">);</span>
+<span class="k">if</span> <span class="o">(!</span><span class="n">d</span><span class="o">.</span><span class="na">getSpecificPortMappingEntry</span><span class="o">(</span><span class="n">SAMPLE_PORT</span><span class="o">,</span><span class="s">"TCP"</span><span class="o">,</span><span class="n">portMapping</span><span class="o">))</span> <span class="o">{</span>
+    <span class="n">logger</span><span class="o">.</span><span class="na">info</span><span class="o">(</span><span class="s">"Port was already mapped. Aborting test."</span><span class="o">);</span>    
+<span class="o">}</span> <span class="k">else</span> <span class="o">{</span>
+</pre></div>
+
+<p>In case it return false, we can move on to create the mapping by using <code>addPortMapping</code>. We will configure the gateway to forward any TCP connection it receives on <code>SAMPLE_PORT</code> to <code>SAMPLE_PORT</code> on the local address (the address of the device weupnp is running on). If the operation succeeds, the method will return <code>true</code> and the mapping will be called <em>test</em>.</p>
+
+<div class="highlight"><pre>    <span class="n">logger</span><span class="o">.</span><span class="na">info</span><span class="o">(</span><span class="s">"Sending port mapping request"</span><span class="o">);</span>
+    <span class="k">if</span> <span class="o">(!</span><span class="n">d</span><span class="o">.</span><span class="na">addPortMapping</span><span class="o">(</span><span class="n">SAMPLE_PORT</span><span class="o">,</span> <span class="n">SAMPLE_PORT</span><span class="o">,</span>
+            <span class="n">localAddress</span><span class="o">.</span><span class="na">getHostAddress</span><span class="o">(),</span><span class="s">"TCP"</span><span class="o">,</span><span class="s">"test"</span><span class="o">))</span> <span class="o">{</span>
+        <span class="n">logger</span><span class="o">.</span><span class="na">info</span><span class="o">(</span><span class="s">"Port mapping attempt failed"</span><span class="o">);</span>
+        <span class="n">logger</span><span class="o">.</span><span class="na">info</span><span class="o">(</span><span class="s">"Test FAILED"</span><span class="o">);</span>
+    <span class="o">}</span> <span class="k">else</span> <span class="o">{</span>
+</pre></div>
+
+<p>Wait a few seconds and then remove the mapping. If your gateway has an admin interface for UPnP, you can use that time to verify that a mapping called test is present.</p>
+
+<div class="highlight"><pre>        <span class="n">logger</span><span class="o">.</span><span class="na">info</span><span class="o">(</span><span class="s">"Mapping successful: waiting {0} seconds before removing."</span><span class="o">,</span>
+            <span class="n">WAIT_TIME</span><span class="o">);</span>
+        <span class="n">Thread</span><span class="o">.</span><span class="na">sleep</span><span class="o">(</span><span class="mi">1000</span><span class="o">*</span><span class="n">WAIT_TIME</span><span class="o">);</span>
+        <span class="n">d</span><span class="o">.</span><span class="na">deletePortMapping</span><span class="o">(</span><span class="n">SAMPLE_PORT</span><span class="o">,</span><span class="s">"TCP"</span><span class="o">);</span>
+
+        <span class="n">logger</span><span class="o">.</span><span class="na">info</span><span class="o">(</span><span class="s">"Port mapping removed"</span><span class="o">);</span>
+        <span class="n">logger</span><span class="o">.</span><span class="na">info</span><span class="o">(</span><span class="s">"Test SUCCESSFUL"</span><span class="o">);</span>
+    <span class="o">}</span>
+<span class="o">}</span>
+
+<span class="n">logger</span><span class="o">.</span><span class="na">info</span><span class="o">(</span><span class="s">"Stopping weupnp"</span><span class="o">);</span>
+</pre></div>
+
+<p>You can find a runnable version of the code above in the <a href="https://github.com/bitletorg/weupnp/blob/master/src/main/java/org/bitlet/weupnp/Main.java">Main</a> class of the package <code>org.bitlet.weupnp</code>.</p>
+
+<h1>Acknowledgements</h1>
+
+<p>The implementation of weupnp was inspired by <a href="http://miniupnp.free.fr/">miniupnp</a>, a C UPnP library by Thomas Bernard.</p>
+
+<h1>Participate</h1>
+
+<p>If you wish to contribute, feel free to drop a line to <a href="https://github.com/abahgat" class="user-mention">@abahgat</a> and <a href="https://github.com/DCastagna" class="user-mention">@DCastagna</a>.</p>
+        </section>
+
+        <aside id="sidebar">
+          <a href="https://github.com/bitletorg/weupnp/zipball/master" class="button">
+            <small>Download</small>
+            .zip file
+          </a>
+          <a href="https://github.com/bitletorg/weupnp/tarball/master" class="button">
+            <small>Download</small>
+            .tar.gz file
+          </a>
+
+          <p class="repo-owner"><a href="https://github.com/bitletorg/weupnp"></a> is maintained by <a href="https://github.com/bitletorg">bitletorg</a>.</p>
+
+          <p>This page was generated by <a href="pages.github.com">GitHub Pages</a> using the Architect theme by <a href="http://twitter.com/jasonlong">Jason Long</a>.</p>
+        </aside>
+      </div>
+    </div>
+
+            <script type="text/javascript">
+            var gaJsHost = (("https:" == document.location.protocol) ? "https://ssl." : "http://www.");
+            document.write(unescape("%3Cscript src='" + gaJsHost + "google-analytics.com/ga.js' type='text/javascript'%3E%3C/script%3E"));
+          </script>
+          <script type="text/javascript">
+            try {
+              var pageTracker = _gat._getTracker("UA-2221999-4");
+            pageTracker._trackPageview();
+            } catch(err) {}
+          </script>
+
+  </body>
+</html>
