@@ -117,7 +117,7 @@ public class GatewayDiscover {
                         System.arraycopy(receivePacket.getData(), 0, receivedData, 0, receivePacket.getLength());
 
                         // Create GatewayDevice from response
-                        GatewayDevice gateDev = parseMSearchReplay(receivedData);
+                        GatewayDevice gateDev = parseMSearchReply(receivedData);
 
                         gateDev.setLocalAddress(ip);
                         gateDev.loadDescription();
@@ -233,7 +233,7 @@ public class GatewayDiscover {
      * @param reply the raw bytes received as a reply
      * @return the representation of a GatewayDevice
      */
-    private GatewayDevice parseMSearchReplay(byte[] reply) {
+    private GatewayDevice parseMSearchReply(byte[] reply) {
 
         GatewayDevice device = new GatewayDevice();
 
