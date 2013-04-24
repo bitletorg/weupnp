@@ -43,7 +43,7 @@ public class Main {
 
 	private static int SAMPLE_PORT = 6991;
 	private static short WAIT_TIME = 10;
-	private static boolean LISTALLMAPPINGS = false;
+	private static boolean LIST_ALL_MAPPINGS = false;
 
 	public static void main(String[] args) throws Exception{
 
@@ -90,8 +90,8 @@ public class Main {
 
 		// testing getGenericPortMappingEntry
 		PortMappingEntry portMapping0=new PortMappingEntry();
-		if (LISTALLMAPPINGS) {
-			int pmCount=0;
+		if (LIST_ALL_MAPPINGS) {
+			int pmCount = 0;
 			do {
 				if (activeGW.getGenericPortMappingEntry(pmCount,portMapping0))
 					AddLogline("Portmapping #"+pmCount+" successfully retrieved ("+portMapping0.getPortMappingDescription()+":"+portMapping0.getExternalPort()+")");
