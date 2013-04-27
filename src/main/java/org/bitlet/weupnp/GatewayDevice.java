@@ -23,8 +23,6 @@
  */
 package org.bitlet.weupnp;
 
-import org.bitlet.weupnp.NameValueHandler;
-
 import java.io.IOException;
 import java.net.HttpURLConnection;
 import java.net.InetAddress;
