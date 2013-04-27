@@ -76,7 +76,7 @@ public class GatewayDiscover {
      * The assumption is that a machine is connected to up to a Gateway Device
      * per InetAddress
      */
-    private Map<InetAddress, GatewayDevice> devices = new HashMap<InetAddress, GatewayDevice>();
+    private final Map<InetAddress, GatewayDevice> devices = new HashMap<InetAddress, GatewayDevice>();
 
     /*
       *  Thread class for sending a search datagram and process the response.

@@ -47,24 +47,24 @@ public class Main {
 
 	public static void main(String[] args) throws Exception{
 
-		AddLogline("Starting weupnp");
+		addLogLine("Starting weupnp");
 
 		GatewayDiscover gatewayDiscover = new GatewayDiscover();
-		AddLogline("Looking for Gateway Devices...");
+		addLogLine("Looking for Gateway Devices...");
 
 		Map<InetAddress, GatewayDevice> gateways = gatewayDiscover.discover();
 
 		if (gateways.isEmpty()) {
-			AddLogline("No gateways found");
-			AddLogline("Stopping weupnp");
+			addLogLine("No gateways found");
+			addLogLine("Stopping weupnp");
 			return;
 		}
-		AddLogline(gateways.size()+" gateway(s) found\n");
+		addLogLine(gateways.size()+" gateway(s) found\n");
 
 		int counter=0;
 		for (GatewayDevice gw: gateways.values()) {
 			counter++;
-			AddLogline("Listing gateway details of device #" + counter+
+			addLogLine("Listing gateway details of device #" + counter+
 					"\n\tFriendly name: "+gw.getFriendlyName()+
 					"\n\tPresentation URL: "+gw.getPresentationURL()+
 					"\n\tModel name: "+gw.getModelName()+
@@ -76,68 +76,68 @@ public class Main {
 		GatewayDevice activeGW = gatewayDiscover.getValidGateway();
 
 		if (null != activeGW) {
-			AddLogline("Using gateway:"+activeGW.getFriendlyName());
+			addLogLine("Using gateway:"+activeGW.getFriendlyName());
 		} else {
-			AddLogline("No active gateway device found");
-			AddLogline("Stopping weupnp");
+			addLogLine("No active gateway device found");
+			addLogLine("Stopping weupnp");
 			return;
 		}
 
 
 		// testing PortMappingNumberOfEntries
 		Integer portMapCount = activeGW.getPortMappingNumberOfEntries();
-		AddLogline("GetPortMappingNumberOfEntries="+(portMapCount!=null?portMapCount.toString():"(unsupported)"));
+		addLogLine("GetPortMappingNumberOfEntries="+(portMapCount!=null?portMapCount.toString():"(unsupported)"));
 
 		// testing getGenericPortMappingEntry
-		PortMappingEntry portMapping0=new PortMappingEntry();
+		PortMappingEntry portMapping = new PortMappingEntry();
 		if (LIST_ALL_MAPPINGS) {
 			int pmCount = 0;
 			do {
-				if (activeGW.getGenericPortMappingEntry(pmCount,portMapping0))
-					AddLogline("Portmapping #"+pmCount+" successfully retrieved ("+portMapping0.getPortMappingDescription()+":"+portMapping0.getExternalPort()+")");
+				if (activeGW.getGenericPortMappingEntry(pmCount,portMapping))
+					addLogLine("Portmapping #"+pmCount+" successfully retrieved ("+portMapping.getPortMappingDescription()+":"+portMapping.getExternalPort()+")");
 				else{
-					AddLogline("Portmapping #"+pmCount+" retrival failed"); 
+					addLogLine("Portmapping #"+pmCount+" retrieval failed"); 
 					break;
 				}
 				pmCount++;
-			} while (portMapping0!=null);
+			} while (portMapping!=null);
 		} else {
-			if (activeGW.getGenericPortMappingEntry(0,portMapping0))
-				AddLogline("Portmapping #0 successfully retrieved ("+portMapping0.getPortMappingDescription()+":"+portMapping0.getExternalPort()+")");
+			if (activeGW.getGenericPortMappingEntry(0,portMapping))
+				addLogLine("Portmapping #0 successfully retrieved ("+portMapping.getPortMappingDescription()+":"+portMapping.getExternalPort()+")");
 			else
-				AddLogline("Portmapping #0 retrival failed");        	
+				addLogLine("Portmapping #0 retrival failed");        	
 		}
 
 		InetAddress localAddress = activeGW.getLocalAddress();
-		AddLogline("Using local address: "+ localAddress.getHostAddress());
+		addLogLine("Using local address: "+ localAddress.getHostAddress());
 		String externalIPAddress = activeGW.getExternalIPAddress();
-		AddLogline("External address: "+ externalIPAddress);
+		addLogLine("External address: "+ externalIPAddress);
 
-		AddLogline("Querying device to see if a port mapping already exists for port "+ SAMPLE_PORT);
-		PortMappingEntry portMapping = new PortMappingEntry();
+		addLogLine("Querying device to see if a port mapping already exists for port "+ SAMPLE_PORT);
 
 		if (activeGW.getSpecificPortMappingEntry(SAMPLE_PORT,"TCP",portMapping)) {
-			AddLogline("Port "+SAMPLE_PORT+" is already mapped. Aborting test.");
+			addLogLine("Port "+SAMPLE_PORT+" is already mapped. Aborting test.");
 			return;
 		} else {
-			AddLogline("Mapping free. Sending port mapping request for port "+SAMPLE_PORT);
+			addLogLine("Mapping free. Sending port mapping request for port "+SAMPLE_PORT);
 
 			// test static lease duration mapping
 			if (activeGW.addPortMapping(SAMPLE_PORT,SAMPLE_PORT,localAddress.getHostAddress(),"TCP","test")) {
-				AddLogline("Mapping SUCCESSFUL. Waiting "+WAIT_TIME+" seconds before removing mapping...");
+				addLogLine("Mapping SUCCESSFUL. Waiting "+WAIT_TIME+" seconds before removing mapping...");
 				Thread.sleep(1000*WAIT_TIME);
 
-				if (activeGW.deletePortMapping(SAMPLE_PORT,"TCP")==true)
-					AddLogline("Port mapping removed, test SUCCESSFUL");
-				else
-					AddLogline("Port mapping removal FAILED");
+				if (activeGW.deletePortMapping(SAMPLE_PORT,"TCP")) {
+					addLogLine("Port mapping removed, test SUCCESSFUL");
+                } else {
+					addLogLine("Port mapping removal FAILED");
+                }
 			}
 		} 
 
-		AddLogline("Stopping weupnp");
+		addLogLine("Stopping weupnp");
 	}
 
-	static void AddLogline(String line) {
+	private static void addLogLine(String line) {
 
 		String timeStamp = DateFormat.getTimeInstance().format(new Date());
 		String logline = timeStamp+": "+line+"\n";

@@ -77,6 +77,7 @@ public class GatewayDeviceHandler extends DefaultHandler {
      *            wrapping another exception.
      * @see org.xml.sax.ContentHandler#startElement
      */
+    @Override
     public void startElement(String uri, String localName, String qName,
             Attributes attributes) throws SAXException {
         currentElement = localName;
@@ -108,6 +109,7 @@ public class GatewayDeviceHandler extends DefaultHandler {
      *            wrapping another exception.
      * @see org.xml.sax.ContentHandler#endElement
      */
+    @Override
     public void endElement(String uri, String localName, String qName) throws SAXException {
         currentElement = "";
         level--;
@@ -135,6 +137,7 @@ public class GatewayDeviceHandler extends DefaultHandler {
      *            wrapping another exception.
      * @see org.xml.sax.ContentHandler#characters
      */
+    @Override
     public void characters(char[] ch, int start, int length) throws SAXException {
         if (currentElement.compareTo("URLBase") == 0)
             device.setURLBase(new String(ch,start,length));

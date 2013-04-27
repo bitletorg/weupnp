@@ -79,6 +79,7 @@ public class NameValueHandler extends DefaultHandler {
      *            wrapping another exception.
      * @see org.xml.sax.ContentHandler#startElement
      */
+    @Override
     public void startElement(String uri, String localName, String qName,
             Attributes attributes) throws SAXException {
         currentElement = localName;
@@ -105,6 +106,7 @@ public class NameValueHandler extends DefaultHandler {
      * @throws SAXException Any SAX exception, possibly
      *            wrapping another exception.
      */
+    @Override
     public void endElement(String uri, String localName, String qName)
             throws SAXException {
         currentElement = null;
@@ -123,6 +125,7 @@ public class NameValueHandler extends DefaultHandler {
      *            wrapping another exception.
      * @see org.xml.sax.ContentHandler#characters
      */
+    @Override
     public void characters(char[] ch, int start, int length)
             throws SAXException {
         if (currentElement != null) {

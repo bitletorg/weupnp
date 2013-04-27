@@ -283,7 +283,7 @@ public class GatewayDevice {
      * @param internalClient the internal client associated with the new mapping
      * @param protocol       the protocol associated with the new mapping
      * @param description    the mapping description
-     * @return true if the mapping was succesfully added, false otherwise
+     * @return true if the mapping was successfully added, false otherwise
      * @throws IOException
      * @throws SAXException
      * @see #simpleUPnPcommand(java.lang.String, java.lang.String,
