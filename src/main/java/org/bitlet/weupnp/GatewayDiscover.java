@@ -35,6 +35,7 @@ import java.net.SocketException;
 import java.net.SocketTimeoutException;
 import java.net.UnknownHostException;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Collection;
 import java.util.Enumeration;
 import java.util.HashMap;
@@ -72,6 +73,17 @@ public class GatewayDiscover {
     private String[] searchTypes;
     
     /**
+     * The default gateway types to use in search
+     */
+    private static final String[] DEFAULT_SEARCH_TYPES =
+        {
+            "urn:schemas-upnp-org:device:InternetGatewayDevice:1",
+            "urn:schemas-upnp-org:service:WANIPConnection:1",
+            "urn:schemas-upnp-org:service:WANPPPConnection:1"
+        };
+            
+    
+    /**
      * A map of the GatewayDevices discovered so far.
      * The assumption is that a machine is connected to up to a Gateway Device
      * per InetAddress
@@ -107,7 +119,6 @@ public class GatewayDiscover {
                 ssdp.send(ssdpDiscoverPacket);
                 ssdp.setSoTimeout(TIMEOUT);
 
-
                 boolean waitingPacket = true;
                 while (waitingPacket) {
                     DatagramPacket receivePacket = new DatagramPacket(new byte[1536], 1536);
@@ -117,13 +128,16 @@ public class GatewayDiscover {
                         System.arraycopy(receivePacket.getData(), 0, receivedData, 0, receivePacket.getLength());
 
                         // Create GatewayDevice from response
-                        GatewayDevice gateDev = parseMSearchReply(receivedData);
+                        GatewayDevice gatewayDevice = parseMSearchReply(receivedData);
 
-                        gateDev.setLocalAddress(ip);
-                        gateDev.loadDescription();
+                        gatewayDevice.setLocalAddress(ip);
+                        gatewayDevice.loadDescription();
 
-                        synchronized (devices) {
-                            devices.put(ip, gateDev);
+                        // verify that the search type is among the requested ones
+                        if (Arrays.asList(searchTypes).contains(gatewayDevice.getSt())) {
+                            synchronized (devices) {
+                                devices.put(ip, gatewayDevice);
+                            }
                         }
                     } catch (SocketTimeoutException ste) {
                         waitingPacket = false;
@@ -146,12 +160,8 @@ public class GatewayDiscover {
      * By default it's looking for 3 types of gateways.
      * 
      */
-    public GatewayDiscover () {
-        this(new String[] {
-            "urn:schemas-upnp-org:device:InternetGatewayDevice:1",
-            "urn:schemas-upnp-org:service:WANIPConnection:1",
-            "urn:schemas-upnp-org:service:WANPPPConnection:1"
-        });
+    public GatewayDiscover() {
+        this(DEFAULT_SEARCH_TYPES);
     }
 
     /**
@@ -168,7 +178,7 @@ public class GatewayDiscover {
      * 
      * @param types The search types the discover have to look for
      */
-    public GatewayDiscover (String[] types) {
+    public GatewayDiscover(String[] types) {
         this.searchTypes = types;
     }
 
