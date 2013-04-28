@@ -65,18 +65,18 @@ public class Main {
 		for (GatewayDevice gw: gateways.values()) {
 			counter++;
 			addLogLine("Listing gateway details of device #" + counter+
-					"\n\tFriendly name: "+gw.getFriendlyName()+
-					"\n\tPresentation URL: "+gw.getPresentationURL()+
-					"\n\tModel name: "+gw.getModelName()+
-					"\n\tModel number: "+gw.getModelNumber()+
-					"\n\tLocal interface address: "+gw.getLocalAddress().getHostAddress()+"\n");
+					"\n\tFriendly name: " + gw.getFriendlyName()+
+					"\n\tPresentation URL: " + gw.getPresentationURL()+
+					"\n\tModel name: " + gw.getModelName()+
+					"\n\tModel number: " + gw.getModelNumber()+
+					"\n\tLocal interface address: " + gw.getLocalAddress().getHostAddress()+"\n");
 		}
 
 		// choose the first active gateway for the tests
 		GatewayDevice activeGW = gatewayDiscover.getValidGateway();
 
 		if (null != activeGW) {
-			addLogLine("Using gateway:"+activeGW.getFriendlyName());
+			addLogLine("Using gateway: " + activeGW.getFriendlyName());
 		} else {
 			addLogLine("No active gateway device found");
 			addLogLine("Stopping weupnp");
@@ -86,7 +86,7 @@ public class Main {
 
 		// testing PortMappingNumberOfEntries
 		Integer portMapCount = activeGW.getPortMappingNumberOfEntries();
-		addLogLine("GetPortMappingNumberOfEntries="+(portMapCount!=null?portMapCount.toString():"(unsupported)"));
+		addLogLine("GetPortMappingNumberOfEntries: " + (portMapCount!=null?portMapCount.toString():"(unsupported)"));
 
 		// testing getGenericPortMappingEntry
 		PortMappingEntry portMapping = new PortMappingEntry();
