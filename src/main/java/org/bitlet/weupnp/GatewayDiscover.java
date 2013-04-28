@@ -256,7 +256,7 @@ public class GatewayDiscover {
             if (line.isEmpty())
                 continue;
 
-            if (line.startsWith("HTTP/1."))
+            if (line.startsWith("HTTP/1.") || line.startsWith("NOTIFY *"))
                 continue;
 
             String key = line.substring(0, line.indexOf(':'));
