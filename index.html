@@ -39,17 +39,32 @@
 <li>Since version 1.6, the <a href="http://upnp-portmapper.sourceforge.net/">UPnP PortMapper</a> can use weupnp to communicate with Gateway Devices.</li>
 <li>
 <a href="http://www.jitsi.org/">Jitsi</a> (formerly SIP communicator) uses weupnp to gather UPnP candidates for ICE operations</li>
-</ul><h1>Download weupnp</h1>
+</ul><h1>Getting weupnp</h1>
 
-<p>The link at the top of this page will allow you to download archives with source code.</p>
+<h2>Source code</h2>
 
-<p>The binary archives for weupnp are still distributed through the old Google Code <a href="https://code.google.com/p/weupnp/downloads/list">site</a>.</p>
+<p>The link at the top of this page will allow you to download archives with source code, otherwise you can clone the git repository.</p>
+
+<h2>Maven dependency</h2>
+
+<p>If you use Maven with your project, you just have to include the following dependency in your <code>pom.xml</code>:</p>
+
+<pre><code>&lt;dependency&gt;
+    &lt;groupId&gt;org.bitlet&lt;/groupId&gt;
+    &lt;artifactId&gt;weupnp&lt;/artifactId&gt;
+    &lt;version&gt;0.1.2&lt;/version&gt;
+&lt;/dependency&gt;
+</code></pre>
+
+<h2>Binary archives</h2>
+
+<p>In case you do not use Maven, the binary archives for weupnp are available for <a href="http://search.maven.org/#browse%7C-338337906">direct download</a>.</p>
 
 <h1>Licensing</h1>
 
 <p>weupnp is released under the LGPL license.</p>
 
-<h1>Use weupnp</h1>
+<h1>Using weupnp</h1>
 
 <p>Using weupnp is fairly simple, here is an annotated example of the what you would need to do to manipulate a simple mapping on your gateway.</p>
 
@@ -135,7 +150,7 @@
 
 <p>The implementation of weupnp was inspired by <a href="http://miniupnp.free.fr/">miniupnp</a>, a C UPnP library by Thomas Bernard.</p>
 
-<h1>Participate</h1>
+<h1>Participating</h1>
 
 <p>If you wish to contribute, feel free to drop a line to <a href="https://github.com/abahgat" class="user-mention">@abahgat</a> and <a href="https://github.com/DCastagna" class="user-mention">@DCastagna</a>.</p>
         </section>
