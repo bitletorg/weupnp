@@ -349,7 +349,7 @@ public class GatewayDevice {
                 !nameValue.containsKey("NewInternalPort"))
             return false;
 
-        portMappingEntry.setProtocol(nameValue.get("NewProtocol"));
+        portMappingEntry.setProtocol(protocol);
         portMappingEntry.setEnabled(nameValue.get("NewEnabled"));
         portMappingEntry.setInternalClient(nameValue.get("NewInternalClient"));
         portMappingEntry.setExternalPort(externalPort);
