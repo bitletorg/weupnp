@@ -137,6 +137,7 @@ public class GatewayDiscover {
                         if (Arrays.asList(searchTypes).contains(gatewayDevice.getSt())) {
                             synchronized (devices) {
                                 devices.put(ip, gatewayDevice);
+                                break; // device added for this ip, nothing further to do
                             }
                         }
                     } catch (SocketTimeoutException ste) {
