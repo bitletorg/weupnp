@@ -29,6 +29,7 @@ import java.net.InetAddress;
 import java.net.URL;
 import java.net.URLConnection;
 import java.util.HashMap;
+import java.util.LinkedHashMap;
 import java.util.Map;
 import java.util.Set;
 
@@ -291,7 +292,7 @@ public class GatewayDevice {
     public boolean addPortMapping(int externalPort, int internalPort,
                                   String internalClient, String protocol, String description)
             throws IOException, SAXException {
-        Map<String, String> args = new HashMap<String, String>();
+        Map<String, String> args = new LinkedHashMap<String, String>();
         args.put("NewRemoteHost", "");    // wildcard, any remote host matches
         args.put("NewExternalPort", Integer.toString(externalPort));
         args.put("NewProtocol", protocol);
@@ -334,7 +335,7 @@ public class GatewayDevice {
         portMappingEntry.setExternalPort(externalPort);
         portMappingEntry.setProtocol(protocol);
 
-        Map<String, String> args = new HashMap<String, String>();
+        Map<String, String> args = new LinkedHashMap<String, String>();
         args.put("NewRemoteHost", ""); // wildcard, any remote host matches
         args.put("NewExternalPort", Integer.toString(externalPort));
         args.put("NewProtocol", protocol);
@@ -384,7 +385,7 @@ public class GatewayDevice {
     public boolean getGenericPortMappingEntry(int index,
                                               final PortMappingEntry portMappingEntry)
             throws IOException, SAXException {
-        Map<String, String> args = new HashMap<String, String>();
+        Map<String, String> args = new LinkedHashMap<String, String>();
         args.put("NewPortMappingIndex", Integer.toString(index));
 
         Map<String, String> nameValue = simpleUPnPcommand(controlURL,
@@ -451,7 +452,7 @@ public class GatewayDevice {
      */
     public boolean deletePortMapping(int externalPort, String protocol)
             throws IOException, SAXException {
-        Map<String, String> args = new HashMap<String, String>();
+        Map<String, String> args = new LinkedHashMap<String, String>();
         args.put("NewRemoteHost", "");
         args.put("NewExternalPort", Integer.toString(externalPort));
         args.put("NewProtocol", protocol);
