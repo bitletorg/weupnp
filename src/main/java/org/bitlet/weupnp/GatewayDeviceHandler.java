@@ -118,7 +118,10 @@ public class GatewayDeviceHandler extends DefaultHandler {
                     device.getServiceTypeCIF().compareTo("urn:schemas-upnp-org:service:WANCommonInterfaceConfig:1") == 0)
                 state = 2;
             if (device.getServiceType() != null &&
-                    device.getServiceType().compareTo("urn:schemas-upnp-org:service:WANIPConnection:1") == 0)
+                    (
+                            device.getServiceType().contains("urn:schemas-upnp-org:service:WANIPConnection:") ||
+                                    device.getServiceType().contains("urn:schemas-upnp-org:service:WANPPPConnection:")
+                    ))
                 state = 3;
         }
     }
