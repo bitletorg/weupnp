@@ -3,7 +3,7 @@
     <groupId>org.bitlet</groupId>
     <artifactId>weupnp</artifactId>
     <packaging>jar</packaging>
-    <version>0.1.3</version>
+    <version>0.1.4-SNAPSHOT</version>
     <name>weupnp</name>
     <url>https://github.com/bitletorg/weupnp</url>
     <parent>
