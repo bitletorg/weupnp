@@ -10,6 +10,6 @@ If you use Maven, you can start using weupnp by including the following dependen
 <dependency>
     <groupId>org.bitlet</groupId>
     <artifactId>weupnp</artifactId>
-    <version>0.1.2</version>
+    <version>0.1.3</version>
 </dependency>
 ```
