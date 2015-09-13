@@ -63,9 +63,14 @@ public class GatewayDiscover {
     public static final String IP = "239.255.255.250";
 
     /**
-     * The timeout to set for the initial broadcast request
+     * The default timeout for the initial broadcast request
      */
-    private static final int TIMEOUT = 3000;
+    private static final int DEFAULT_TIMEOUT = 3000;
+
+    /**
+     * The timeout for the initial broadcast request
+     */
+    private int timeout = DEFAULT_TIMEOUT;
 
     /**
      * The gateway types the discover have to search.
@@ -117,7 +122,7 @@ public class GatewayDiscover {
                 ssdpDiscoverPacket.setPort(PORT);
 
                 ssdp.send(ssdpDiscoverPacket);
-                ssdp.setSoTimeout(TIMEOUT);
+                ssdp.setSoTimeout(GatewayDiscover.this.timeout);
 
                 boolean waitingPacket = true;
                 while (waitingPacket) {
@@ -181,6 +186,22 @@ public class GatewayDiscover {
      */
     public GatewayDiscover(String[] types) {
         this.searchTypes = types;
+    }
+
+    /**
+     * Gets the timeout for socket connections of the initial broadcast request.
+     * @return timeout in milliseconds
+     */
+    public int getTimeout() {
+        return this.timeout;
+    }
+
+    /**
+     * Sets the timeout for socket connections of the initial broadcast request.
+     * @param milliseconds the new timeout in milliseconds
+     */
+    public void setTimeout(int milliseconds) {
+        this.timeout = milliseconds;
     }
 
     /**
