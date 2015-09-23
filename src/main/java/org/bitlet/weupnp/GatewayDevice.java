@@ -51,7 +51,7 @@ public class GatewayDevice {
 	/**
 	 * Receive timeout when requesting data from device
 	 */
-    private static final int HTTP_RECEIVE_TIMEOUT = 7000;
+    private static final int DEFAULT_HTTP_RECEIVE_TIMEOUT = 7000;
     
 	private String st;
     private String location;
@@ -105,6 +105,11 @@ public class GatewayDevice {
     private String modelName;
 
     /**
+     * Timeout in milliseconds for HTTP reads
+     */
+    private static int httpReadTimeout = DEFAULT_HTTP_RECEIVE_TIMEOUT;
+
+    /**
      * Creates a new instance of GatewayDevice
      */
     public GatewayDevice() {
@@ -124,7 +129,7 @@ public class GatewayDevice {
     public void loadDescription() throws SAXException, IOException {
 
         URLConnection urlConn = new URL(getLocation()).openConnection();
-        urlConn.setReadTimeout(HTTP_RECEIVE_TIMEOUT);
+        urlConn.setReadTimeout(httpReadTimeout);
 
         XMLReader parser = XMLReaderFactory.createXMLReader();
         parser.setContentHandler(new GatewayDeviceHandler(this));
@@ -198,7 +203,8 @@ public class GatewayDevice {
         HttpURLConnection conn = (HttpURLConnection) postUrl.openConnection();
 
         conn.setRequestMethod("POST");
-        conn.setReadTimeout(HTTP_RECEIVE_TIMEOUT);
+        conn.setConnectTimeout(httpReadTimeout);
+        conn.setReadTimeout(httpReadTimeout);
         conn.setDoOutput(true);
         conn.setRequestProperty("Content-Type", "text/xml");
         conn.setRequestProperty("SOAPAction", soapAction);
@@ -632,6 +638,22 @@ public class GatewayDevice {
 
     public void setModelNumber(String modelNumber) {
         this.modelNumber = modelNumber;
+    }
+
+    /**
+     * Gets the timeout for actions on the device.
+     * @return timeout in milliseconds
+     */
+    public static int getHttpReadTimeout() {
+        return httpReadTimeout;
+    }
+
+    /**
+     * Sets the timeout for actions on the device.
+     * @param milliseconds the new timeout in milliseconds
+     */
+    public static void setHttpReadTimeout(int milliseconds) {
+        httpReadTimeout = milliseconds;
     }
 
     // private methods
