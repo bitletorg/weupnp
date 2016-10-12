@@ -1,25 +1,25 @@
-/* 
- *              weupnp - Trivial upnp java library 
+/*
+ *              weupnp - Trivial upnp java library
  *
  * Copyright (C) 2008 Alessandro Bahgat Shehata, Daniele Castagna
- * 
+ *
  * This library is free software; you can redistribute it and/or
  * modify it under the terms of the GNU Lesser General Public
  * License as published by the Free Software Foundation; either
  * version 2.1 of the License, or (at your option) any later version.
- * 
+ *
  * This library is distributed in the hope that it will be useful,
  * but WITHOUT ANY WARRANTY; without even the implied warranty of
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
  * Lesser General Public License for more details.
- * 
+ *
  * You should have received a copy of the GNU Lesser General Public
  * License along with this library; if not, write to the Free Software
  * Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
- * 
+ *
  * Alessandro Bahgat Shehata - ale dot bahgat at gmail dot com
  * Daniele Castagna - daniele dot castagna at gmail dot com
- * 
+ *
  */
 package org.bitlet.weupnp;
 
@@ -38,6 +38,10 @@ import org.xml.sax.SAXException;
 import org.xml.sax.XMLReader;
 import org.xml.sax.helpers.XMLReaderFactory;
 
+import javax.xml.parsers.ParserConfigurationException;
+import javax.xml.parsers.SAXParser;
+import javax.xml.parsers.SAXParserFactory;
+
 /**
  * A <tt>GatewayDevice</tt> is a class that abstracts UPnP-compliant gateways
  * <p/>
@@ -52,7 +56,7 @@ public class GatewayDevice {
 	 * Receive timeout when requesting data from device
 	 */
     private static final int DEFAULT_HTTP_RECEIVE_TIMEOUT = 7000;
-    
+
 	private String st;
     private String location;
     private String serviceType;
@@ -126,12 +130,15 @@ public class GatewayDevice {
      * @throws IOException  on communication errors
      * @see org.bitlet.weupnp.GatewayDeviceHandler
      */
-    public void loadDescription() throws SAXException, IOException {
+    public void loadDescription() throws SAXException, IOException, ParserConfigurationException {
 
         URLConnection urlConn = new URL(getLocation()).openConnection();
         urlConn.setReadTimeout(httpReadTimeout);
 
-        XMLReader parser = XMLReaderFactory.createXMLReader();
+        SAXParserFactory saxParserFactory = SAXParserFactory.newInstance();
+        saxParserFactory.setNamespaceAware(true);
+        SAXParser newSAXParser = saxParserFactory.newSAXParser();
+        XMLReader parser = newSAXParser.getXMLReader();
         parser.setContentHandler(new GatewayDeviceHandler(this));
         parser.parse(new InputSource(urlConn.getInputStream()));
 
@@ -174,7 +181,7 @@ public class GatewayDevice {
      */
     public static Map<String, String> simpleUPnPcommand(String url,
                                                         String service, String action, Map<String, String> args)
-            throws IOException, SAXException {
+            throws IOException, SAXException, ParserConfigurationException {
         String soapAction = "\"" + service + "#" + action + "\"";
         StringBuilder soapBody = new StringBuilder();
 
@@ -218,7 +225,10 @@ public class GatewayDevice {
         conn.getOutputStream().write(soapBodyBytes);
 
         Map<String, String> nameValue = new HashMap<String, String>();
-        XMLReader parser = XMLReaderFactory.createXMLReader();
+        SAXParserFactory saxParserFactory = SAXParserFactory.newInstance();
+        saxParserFactory.setNamespaceAware(true);
+        SAXParser newSAXParser = saxParserFactory.newSAXParser();
+        XMLReader parser = newSAXParser.getXMLReader();
         parser.setContentHandler(new NameValueHandler(nameValue));
         if (conn.getResponseCode() == HttpURLConnection.HTTP_INTERNAL_ERROR) {
             try {
@@ -247,7 +257,7 @@ public class GatewayDevice {
      * @see #simpleUPnPcommand(java.lang.String, java.lang.String,
      *      java.lang.String, java.util.Map)
      */
-    public boolean isConnected() throws IOException, SAXException {
+    public boolean isConnected() throws IOException, SAXException, ParserConfigurationException {
         Map<String, String> nameValue = simpleUPnPcommand(controlURL,
                 serviceType, "GetStatusInfo", null);
 
@@ -272,7 +282,7 @@ public class GatewayDevice {
      * @see #simpleUPnPcommand(java.lang.String, java.lang.String,
      *      java.lang.String, java.util.Map)
      */
-    public String getExternalIPAddress() throws IOException, SAXException {
+    public String getExternalIPAddress() throws IOException, SAXException, ParserConfigurationException {
         Map<String, String> nameValue = simpleUPnPcommand(controlURL,
                 serviceType, "GetExternalIPAddress", null);
 
@@ -297,7 +307,7 @@ public class GatewayDevice {
      */
     public boolean addPortMapping(int externalPort, int internalPort,
                                   String internalClient, String protocol, String description)
-            throws IOException, SAXException {
+            throws IOException, SAXException, ParserConfigurationException {
         Map<String, String> args = new LinkedHashMap<String, String>();
         args.put("NewRemoteHost", "");    // wildcard, any remote host matches
         args.put("NewExternalPort", Integer.toString(externalPort));
@@ -336,7 +346,7 @@ public class GatewayDevice {
      */
     public boolean getSpecificPortMappingEntry(int externalPort,
                                                String protocol, final PortMappingEntry portMappingEntry)
-            throws IOException, SAXException {
+            throws IOException, SAXException, ParserConfigurationException {
 
         portMappingEntry.setExternalPort(externalPort);
         portMappingEntry.setProtocol(protocol);
@@ -390,7 +400,7 @@ public class GatewayDevice {
      */
     public boolean getGenericPortMappingEntry(int index,
                                               final PortMappingEntry portMappingEntry)
-            throws IOException, SAXException {
+            throws IOException, SAXException, ParserConfigurationException {
         Map<String, String> args = new LinkedHashMap<String, String>();
         args.put("NewPortMappingIndex", Integer.toString(index));
 
@@ -431,7 +441,7 @@ public class GatewayDevice {
      * @throws SAXException
      */
     public Integer getPortMappingNumberOfEntries()
-            throws IOException, SAXException {
+            throws IOException, SAXException, ParserConfigurationException {
         Map<String, String> nameValue = simpleUPnPcommand(controlURL,
                 serviceType, "GetPortMappingNumberOfEntries", null);
 
@@ -457,7 +467,7 @@ public class GatewayDevice {
      * @throws SAXException
      */
     public boolean deletePortMapping(int externalPort, String protocol)
-            throws IOException, SAXException {
+            throws IOException, SAXException, ParserConfigurationException {
         Map<String, String> args = new LinkedHashMap<String, String>();
         args.put("NewRemoteHost", "");
         args.put("NewExternalPort", Integer.toString(externalPort));
